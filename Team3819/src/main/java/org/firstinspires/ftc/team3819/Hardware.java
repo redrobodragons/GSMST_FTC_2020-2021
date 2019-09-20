@@ -37,28 +37,14 @@ public class Hardware {
         backLeft = (DcMotorEx)map.get(DcMotor.class, "backLeft");
         frontRight = (DcMotorEx)map.get(DcMotor.class, "frontRight");
         backRight = (DcMotorEx)map.get(DcMotor.class, "backRight");
-        /*intake = (DcMotorEx)map.get(DcMotor.class, "intake");
-        liftFront = (DcMotorEx)map.get(DcMotor.class, "liftFront");
-        liftBack = (DcMotorEx)map.get(DcMotor.class, "liftBack");
-        liftSlide = (DcMotorEx)map.get(DcMotorEx.class, "liftSlide");
-        armLeft = (DcMotorEx)map.get(DcMotorEx.class, "armLeft");
-        armRight = (DcMotorEx)map.get(DcMotorEx.class, "armRight");
-        servo = (Servo)map.get(Servo.class, "servo");*/
+        //servo = (Servo)map.get(Servo.class, "servo");
         //Webcam1 = map.get(WebcamName.class, "Webcam 1");
 
-        /*left.setDirection(DcMotorSimple.Direction.REVERSE);
-        liftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        intake.setDirection((DcMotorSimple.Direction.REVERSE));
-        armRight.setDirection((DcMotorSimple.Direction.REVERSE));
-        liftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        liftFront.setDirection((DcMotorSimple.Direction.REVERSE));*/
+        //left.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        /*left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);*/
+        //left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -76,8 +62,9 @@ public class Hardware {
     public void drive(Gamepad gp) {
         double turn = 0;
         if(Math.abs(gp.right_stick_x)>=.05 || Math.abs(gp.right_stick_y)>=.05) {
-            if(Math.abs(gp.right_stick_x)>=.1)
+            if(Math.abs(gp.right_stick_x)>=.1) {
                 turn = gp.right_stick_x;
+            }
             frontLeft.setPower(-1 * gp.right_stick_y + turn);
             backLeft.setPower(-1 * gp.right_stick_y + turn);
             frontRight.setPower(-1 * gp.right_stick_y - turn);
