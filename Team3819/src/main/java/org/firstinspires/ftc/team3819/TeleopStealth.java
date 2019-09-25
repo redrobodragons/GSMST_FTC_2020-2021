@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.team3819.Hardware;
 
-@TeleOp(name="Teleop")
-public class Teleop extends OpMode {
+@TeleOp(name="TeleopStealth")
+public class TeleopStealth extends OpMode {
     Hardware robot;
     double turn;
 
@@ -18,7 +18,7 @@ public class Teleop extends OpMode {
     }
 
     private void driverOne() {
-        robot.drive(gamepad1);
+        robot.driveDos(gamepad1);
         telemetry.addLine("Y stick 1 " + gamepad1.left_stick_y);
         telemetry.addLine("X stick 2 " + gamepad1.right_stick_x);
         telemetry.update();
