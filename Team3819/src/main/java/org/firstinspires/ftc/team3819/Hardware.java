@@ -81,20 +81,50 @@ public class Hardware {
 
     public void driveDos(Gamepad gp) {
         double turn = 0;
-        if(Math.abs(gp.left_stick_x)>=.05 || Math.abs(gp.right_stick_y)>=.05) {
-            if(Math.abs(gp.left_stick_x)>=.1) {
+        /*if(Math.abs(gp.left_stick_x)>=.05 || Math.abs(gp.right_stick_y)>=.05) {
+            if(Math.abs(gp.left_stick_x)>=.05) {
                 turn = gp.left_stick_x;
             }
             frontLeft.setPower((-1 * gp.right_stick_y + turn)*2);
             backLeft.setPower((-1 * gp.right_stick_y + turn)*2);
             frontRight.setPower((-1 * gp.right_stick_y - turn)*2);
             backRight.setPower((-1 * gp.right_stick_y - turn)*2);
+        }*/
+        if(Math.abs(gp.left_stick_y)>=.05 || Math.abs(gp.right_stick_x)>=.05) {
+            if(Math.abs(gp.right_stick_x)>=.05) {
+                turn = gp.right_stick_x;
+            }
+            frontLeft.setPower((-1 * gp.left_stick_y + turn)*2);
+            backLeft.setPower((-1 * gp.left_stick_y + turn)*2);
+            frontRight.setPower((-1 * gp.left_stick_y - turn)*2);
+            backRight.setPower((-1 * gp.left_stick_y - turn)*2);
         }
         else {
             frontLeft.setPower(0);
             backLeft.setPower(0);
             frontRight.setPower(0);
             backRight.setPower(0);
+        }
+        if(gp.left_bumper)
+        {
+            frontLeft.setPower(1);
+            backLeft.setPower(-1);
+            frontRight.setPower(-1);
+            backRight.setPower(1);
+        }
+        else
+        {
+            frontLeft.setPower(0);
+            backLeft.setPower(0);
+            frontRight.setPower(0);
+            backRight.setPower(0);
+        }
+        if(gp.right_bumper)
+        {
+            frontLeft.setPower(-1);
+            backLeft.setPower(1);
+            frontRight.setPower(1);
+            backRight.setPower(-1);
         }
     }
 

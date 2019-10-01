@@ -7,9 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.team3819.Hardware;
 
-@TeleOp(name="TeleopStealth")
-@Disabled
-public class TeleopStealth extends OpMode {
+@TeleOp(name="TeleopMech")
+public class TeleopMech extends OpMode {
     Hardware robot;
     double turn;
 
