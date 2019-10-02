@@ -41,7 +41,7 @@ public class Hardware {
         //Webcam1 = map.get(WebcamName.class, "Webcam 1");
 
         //left.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
