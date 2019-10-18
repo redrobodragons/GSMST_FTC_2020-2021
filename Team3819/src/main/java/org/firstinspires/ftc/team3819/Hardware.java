@@ -16,12 +16,11 @@ public class Hardware {
     private HardwareMap map = null;
 
     public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null;    //DC Motors
-    public DcMotorControllerEx motorControllerEx = null;
     public Servo servo = null;
     public WebcamName Webcam1 = null;
 
     public static final double     PI  =  3.14159;
-    public static final int        CPR = 537;                                 //encoder counts per revolution
+    public static final int        CPR = 560;                                 //encoder counts per revolution
     private static final double    DIAMETER = 4;                               //encoded drive wheel diameter (in)
     private static final double    GEARING = 1;
     public static final double     CPI = (CPR * GEARING) / (DIAMETER * PI);
@@ -156,6 +155,65 @@ public class Hardware {
         //left.setDirection(DcMotorSimple.Direction.FORWARD);
         //right.setDirection(DcMotorSimple.Direction.REVERSE);
     }*/
+
+    public void driveInches(double pow, int in)
+    {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        int target = (int)(in*CPI);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setTargetPosition(target);
+        frontRight.setTargetPosition(target);
+        backLeft.setTargetPosition(target);
+        backRight.setTargetPosition(target);
+
+        frontLeft.setPower(pow);
+        frontRight.setPower(pow);
+        backLeft.setPower(pow);
+        backRight.setPower(pow);
+
+        while(frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())
+        {
+            //waiting until done running
+        }
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void turn(double pow, double degrees)
+    {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setTargetPosition(-1*(int)((360.0/degrees)*CIRCUMFRENCE*CPI));
+        frontRight.setTargetPosition((int)((360.0/degrees)*CIRCUMFRENCE*CPI));
+        backLeft.setTargetPosition(-1*(int)((360.0/degrees)*CIRCUMFRENCE*CPI));
+        backRight.setTargetPosition((int)((360.0/degrees)*CIRCUMFRENCE*CPI));
+    }
 
     /*public void turn(double pow, double degrees) {
         resetEncoders();

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.team3819.Hardware;
 
 @TeleOp(name="TestTeleop")
+@Disabled
 public class TestTeleop extends OpMode {
     Hardware robot;
     double turn;
