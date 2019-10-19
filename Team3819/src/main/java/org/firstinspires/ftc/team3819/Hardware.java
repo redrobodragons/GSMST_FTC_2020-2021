@@ -18,8 +18,8 @@ public class Hardware {
 
     public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null,
             torqueBackRight = null, torqueFrontRight = null, torqueBackLeft = null, torqueFrontLeft = null;   //DC Motors
-    public Servo servoBackRight = null, servoBackLeft = null, servoIntake = null;
-    //public CRServo vexRight = null, vexLeft = null;
+    public Servo servoBackRight = null, servoBackLeft = null, servoIntake = null, vexRight = null;
+    //public CRServo vexRight = null; //vexLeft = null;
     public WebcamName Webcam1 = null;
 
     public static final double     PI  =  3.14159;
@@ -48,6 +48,7 @@ public class Hardware {
         servoBackLeft = (Servo)map.get(Servo.class, "servoBackLeft");
         servoBackRight = (Servo)map.get(Servo.class, "servoBackRight");
         servoIntake = (Servo)map.get(Servo.class, "servoIntake");
+        vexRight = (Servo)map.get(Servo.class, "vexRight");
 
         //vexLeft = (CRServo)map.get(CRServo.class, "vexLeft");
         //vexRight = (CRServo)map.get(CRServo.class, "vexRight");
@@ -129,6 +130,21 @@ public class Hardware {
         {
             frontLeft.setPower(1);
             backLeft.setPower(-1);
+            frontRight.setPower(1);
+            backRight.setPower(-1);
+        }
+        else
+        {
+            frontLeft.setPower(0);
+            backLeft.setPower(0);
+            frontRight.setPower(0);
+            backRight.setPower(0);
+        }
+
+        if(gp.dpad_right)
+        {
+            frontLeft.setPower(-1);
+            backLeft.setPower(1);
             frontRight.setPower(-1);
             backRight.setPower(1);
         }
@@ -139,12 +155,18 @@ public class Hardware {
             frontRight.setPower(0);
             backRight.setPower(0);
         }
-        if(gp.dpad_right)
+
+        /*if(gp.dpad_up)
         {
-            frontLeft.setPower(-1);
-            backLeft.setPower(1);
-            frontRight.setPower(1);
-            backRight.setPower(-1);
+            //vexRight.setPower(0.5);
+            //vexLeft.setPower(1);
+            vexRight.setPosition(0.5);
+        }
+
+        if(gp.dpad_down)
+        {
+            //vexRight.setPower(-0.5);
+            //vexLeft.setPower(-1);
         }
 
         /*if(gp.right_bumper)
@@ -158,53 +180,71 @@ public class Hardware {
             vexLeft.setPower(0);
         }*/
 
-        if(gp.left_bumper)
+        if(gp.dpad_up)
         {
             torqueFrontRight.setPower(1);
             torqueFrontLeft.setPower(1);
-            torqueBackRight.setPower(1);
+            //torqueBackRight.setPower(1);
             torqueBackLeft.setPower(1);
         }
         else
         {
             torqueFrontRight.setPower(0);
             torqueFrontLeft.setPower(0);
-            torqueBackRight.setPower(0);
+            //torqueBackRight.setPower(0);
             torqueBackLeft.setPower(0);
         }
 
-        if(gp.right_trigger > 0.5)
+        if(gp.dpad_down)
         {
-            torqueFrontRight.setPower(-1);
-            torqueFrontLeft.setPower(-1);
-            torqueBackRight.setPower(-1);
-            torqueBackLeft.setPower(-1);
+            torqueFrontRight.setPower(-0.6);
+            torqueFrontLeft.setPower(-0.6);
+            //torqueBackRight.setPower(-1);
+            torqueBackLeft.setPower(-0.6);
         }
         else
         {
             torqueFrontRight.setPower(0);
             torqueFrontLeft.setPower(0);
-            torqueBackRight.setPower(0);
+            //torqueBackRight.setPower(0);
             torqueBackLeft.setPower(0);
         }
 
         if(gp.a)
         {
-            servoBackRight.setPosition(0.5);
-            servoBackLeft.setPosition(0.5);
+            servoBackRight.setPosition(-1);
+            servoBackLeft.setPosition(1);
         }
 
         if(gp.b)
         {
-            servoBackLeft.setPosition(0);
-            servoBackRight.setPosition(0);
+            servoBackLeft.setPosition(0.5);
+            servoBackRight.setPosition(0.5);
         }
 
-        if(gp.x)
+        if(gp.left_bumper)
+        {
+            torqueBackRight.setPower(1);
+        }
+        else
+        {
+            torqueBackRight.setPower(0);
+        }
+
+        if(gp.right_bumper)
+        {
+            torqueBackRight.setPower(-1);
+        }
+        else
+        {
+            torqueBackRight.setPower(0);
+        }
+
+        /*if(gp.x)
         {
             servoIntake.setPosition(0.5);
             servoIntake.setPosition(0.5);
-        }
+        }/*
 
 
         /*if(gp.left_bumper)
@@ -232,6 +272,11 @@ public class Hardware {
 
     }
 
+    public void vexMove()
+    {
+        //vexRight.setPower(0.7);
+        vexRight.setPosition(0.5);
+    }
     /*public void driveInches(double pow, int in) {
         resetEncoders();
         motorControllerEx = (DcMotorControllerEx)left.getController();
@@ -261,64 +306,6 @@ public class Hardware {
         //right.setDirection(DcMotorSimple.Direction.REVERSE);
     }*/
 
-    public void driveInches(double pow, int in)
-    {
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        int target = (int)(in*CPI);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setTargetPosition(target);
-        frontRight.setTargetPosition(target);
-        backLeft.setTargetPosition(target);
-        backRight.setTargetPosition(target);
-
-        frontLeft.setPower(pow);
-        frontRight.setPower(pow);
-        backLeft.setPower(pow);
-        backRight.setPower(pow);
-
-        while(frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())
-        {
-            //waiting until done running
-        }
-
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
-
-    public void turn(double pow, double degrees)
-    {
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setTargetPosition(-1*(int)((360.0/degrees)*CIRCUMFRENCE*CPI));
-        frontRight.setTargetPosition((int)((360.0/degrees)*CIRCUMFRENCE*CPI));
-        backLeft.setTargetPosition(-1*(int)((360.0/degrees)*CIRCUMFRENCE*CPI));
-        backRight.setTargetPosition((int)((360.0/degrees)*CIRCUMFRENCE*CPI));
-    }
 
     /*public void turn(double pow, double degrees) {
         resetEncoders();
