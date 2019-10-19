@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.team3819.Hardware;
 
 @TeleOp(name="TestTeleop")
-@Disabled
 public class TestTeleop extends OpMode {
     Hardware robot;
     double turn;
@@ -33,19 +32,19 @@ public class TestTeleop extends OpMode {
     {
         if(gp.right_bumper)
         {
-            robot.frontRight.setPower(1);
+            robot.torqueBackLeft.setPower(1);
         }
         else if(gp.a)
         {
-            robot.backRight.setPower(1);
+            robot.torqueBackRight.setPower(1);
         }
         else if(gp.left_bumper)
         {
-            robot.frontLeft.setPower(1);
+            robot.torqueFrontLeft.setPower(1);
         }
         else if(gp.b)
         {
-            robot.backLeft.setPower(1);
+            robot.torqueFrontRight.setPower(1);
         }
         else
         {
