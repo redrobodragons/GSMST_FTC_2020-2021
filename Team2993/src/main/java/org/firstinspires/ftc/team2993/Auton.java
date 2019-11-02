@@ -23,7 +23,7 @@ public class Auton extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initialize();
         waitForStart();
-        robot.setAllDrive(0.75);
+        robot.setAllDrive(-0.75);
         waitCustom(1250);
         robot.setAllDrive(0);
     }
