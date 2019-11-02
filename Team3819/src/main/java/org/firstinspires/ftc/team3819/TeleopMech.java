@@ -23,11 +23,6 @@ public class TeleopMech extends OpMode {
         telemetry.addLine("X stick 2 " + gamepad1.right_stick_x);
         telemetry.update();
 
-        if(gamepad1.dpad_up)
-        {
-            robot.vexMove();
-            telemetry.addLine("I AM TRYING TO MOVE");
-        }
 
         /*if(gamepad1.dpad_down) {
             robot.armUp();

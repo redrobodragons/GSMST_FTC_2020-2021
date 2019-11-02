@@ -17,13 +17,13 @@ public class Hardware {
     private HardwareMap map = null;
 
     public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null,
-            torqueBackRight = null, torqueFrontRight = null, torqueBackLeft = null, torqueFrontLeft = null;   //DC Motors
+            torqueBackRight = null, torqueFrontRight = null, vexIntake = null, torqueFrontLeft = null;   //DC Motors
     public Servo servoBackRight = null, servoBackLeft = null, servoIntake = null, vexRight = null;
     //public CRServo vexRight = null; //vexLeft = null;
     public WebcamName Webcam1 = null;
 
     public static final double     PI  =  3.14159;
-    public static final int        CPR = 560;                                 //encoder counts per revolution
+    public static final int        CPR = 140;                                 //encoder counts per revolution 140 or 560
     private static final double    DIAMETER = 4;                               //encoded drive wheel diameter (in)
     private static final double    GEARING = 1;
     public static final double     CPI = (CPR * GEARING) / (DIAMETER * PI);
@@ -40,26 +40,26 @@ public class Hardware {
         frontRight = (DcMotorEx)map.get(DcMotor.class, "frontRight");
         backRight = (DcMotorEx)map.get(DcMotor.class, "backRight");
 
-        torqueBackLeft = (DcMotorEx)map.get(DcMotor.class, "torqueBackLeft");
+        vexIntake = (DcMotorEx)map.get(DcMotor.class, "vexIntake");
         torqueBackRight = (DcMotorEx)map.get(DcMotor.class, "torqueBackRight");
         torqueFrontLeft = (DcMotorEx)map.get(DcMotor.class, "torqueFrontLeft");
         torqueFrontRight = (DcMotorEx)map.get(DcMotor.class, "torqueFrontRight");
 
-        servoBackLeft = (Servo)map.get(Servo.class, "servoBackLeft");
+        /*servoBackLeft = (Servo)map.get(Servo.class, "servoBackLeft");
         servoBackRight = (Servo)map.get(Servo.class, "servoBackRight");
         servoIntake = (Servo)map.get(Servo.class, "servoIntake");
-        vexRight = (Servo)map.get(Servo.class, "vexRight");
+        vexRight = (Servo)map.get(Servo.class, "vexRight");*/
 
         //vexLeft = (CRServo)map.get(CRServo.class, "vexLeft");
         //vexRight = (CRServo)map.get(CRServo.class, "vexRight");
         //Webcam1 = map.get(WebcamName.class, "Webcam 1");
 
         //left.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         torqueFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        torqueBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        vexIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -99,7 +99,8 @@ public class Hardware {
 
     }
 
-    public void driveDos(Gamepad gp) {
+    public void driveDos(Gamepad gp)
+    {
         double turn = 0;
         /*if(Math.abs(gp.left_stick_x)>=.05 || Math.abs(gp.right_stick_y)>=.05) {
             if(Math.abs(gp.left_stick_x)>=.05) {
@@ -110,14 +111,14 @@ public class Hardware {
             frontRight.setPower((-1 * gp.right_stick_y - turn)*2);
             backRight.setPower((-1 * gp.right_stick_y - turn)*2);
         }*/
-        if(Math.abs(gp.right_stick_x)>=.05 || Math.abs(gp.left_stick_y)>=.05) {
-            if(Math.abs(gp.left_stick_y)>=.05) {
-                turn = gp.left_stick_y;
+        if(Math.abs(gp.left_stick_y)>=.05 || Math.abs(gp.right_stick_x)>=.05) {
+            if(Math.abs(gp.right_stick_x)>=.05) {
+                turn = gp.right_stick_x;
             }
-            frontLeft.setPower((1 * gp.right_stick_x - turn)*2);
-            backLeft.setPower((1 * gp.right_stick_x - turn)*2);
-            frontRight.setPower((1 * gp.right_stick_x + turn)*2);
-            backRight.setPower((1 * gp.right_stick_x + turn)*2);
+            frontLeft.setPower((-1 * gp.left_stick_y + turn)*2);
+            backLeft.setPower((-1 * gp.left_stick_y + turn)*2);
+            frontRight.setPower((-1 * gp.left_stick_y - turn)*2);
+            backRight.setPower((-1 * gp.left_stick_y - turn)*2);
         }
         else {
             frontLeft.setPower(0);
@@ -128,8 +129,8 @@ public class Hardware {
 
         if(gp.dpad_left)
         {
-            frontLeft.setPower(1);
-            backLeft.setPower(-1);
+            frontLeft.setPower(-1);
+            backLeft.setPower(1);
             frontRight.setPower(1);
             backRight.setPower(-1);
         }
@@ -143,8 +144,8 @@ public class Hardware {
 
         if(gp.dpad_right)
         {
-            frontLeft.setPower(-1);
-            backLeft.setPower(1);
+            frontLeft.setPower(1);
+            backLeft.setPower(-1);
             frontRight.setPower(-1);
             backRight.setPower(1);
         }
@@ -167,50 +168,60 @@ public class Hardware {
         {
             //vexRight.setPower(-0.5);
             //vexLeft.setPower(-1);
-        }
+        }*/
 
-        /*if(gp.right_bumper)
+        if(gp.right_bumper)
         {
-            vexRight.setPower(1);
-            vexLeft.setPower(1);
+            vexIntake.setPower(1);
         }
         else
         {
-            vexRight.setPower(0);
-            vexLeft.setPower(0);
-        }*/
+            vexIntake.setPower(0);
+        }
+
+        if(gp.left_bumper)
+        {
+            vexIntake.setPower(-1);
+        }
+        else
+        {
+            vexIntake.setPower(0);
+        }
 
         if(gp.dpad_up)
         {
             torqueFrontRight.setPower(1);
             torqueFrontLeft.setPower(1);
-            //torqueBackRight.setPower(1);
-            torqueBackLeft.setPower(1);
+            torqueBackRight.setPower(1);
+            //vexIntake.setPower(1);
         }
         else
         {
             torqueFrontRight.setPower(0);
             torqueFrontLeft.setPower(0);
-            //torqueBackRight.setPower(0);
-            torqueBackLeft.setPower(0);
+            torqueBackRight.setPower(0);
+            //vexIntake.setPower(0);
         }
 
         if(gp.dpad_down)
         {
             torqueFrontRight.setPower(-0.6);
             torqueFrontLeft.setPower(-0.6);
-            //torqueBackRight.setPower(-1);
-            torqueBackLeft.setPower(-0.6);
+            torqueBackRight.setPower(-1);
+            //vexIntake.setPower(-0.6);
         }
         else
         {
             torqueFrontRight.setPower(0);
             torqueFrontLeft.setPower(0);
-            //torqueBackRight.setPower(0);
-            torqueBackLeft.setPower(0);
+            torqueBackRight.setPower(0);
+            //vexIntake.setPower(0);
         }
 
-        if(gp.a)
+
+
+
+        /*if(gp.a)
         {
             servoBackRight.setPosition(-1);
             servoBackLeft.setPosition(1);
@@ -220,7 +231,7 @@ public class Hardware {
         {
             servoBackLeft.setPosition(0.5);
             servoBackRight.setPosition(0.5);
-        }
+        }/*
 
         if(gp.left_bumper)
         {
@@ -272,11 +283,6 @@ public class Hardware {
 
     }
 
-    public void vexMove()
-    {
-        //vexRight.setPower(0.7);
-        vexRight.setPosition(0.5);
-    }
     /*public void driveInches(double pow, int in) {
         resetEncoders();
         motorControllerEx = (DcMotorControllerEx)left.getController();
