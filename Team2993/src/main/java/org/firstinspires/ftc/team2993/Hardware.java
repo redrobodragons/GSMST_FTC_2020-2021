@@ -16,10 +16,7 @@ public class Hardware {
 
     private HardwareMap map = null;
 
-    public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null, fourBar = null,
-    HDriveMotor = null;    //DC Motors
-
-    public CRServo claw = null, hook = null, linearSlider = null;
+    public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null, chainBar = null, claw = null;    //DC Motors
 //    public WebcamName Webcam1 = null;
 
     public static final double     PI  =  3.14159;
@@ -39,22 +36,11 @@ public class Hardware {
         backLeft = (DcMotorEx)map.get(DcMotor.class, "backLeft");
         frontRight = (DcMotorEx)map.get(DcMotor.class, "frontRight");
         backRight = (DcMotorEx)map.get(DcMotor.class, "backRight");
-        HDriveMotor = (DcMotorEx)map.get(DcMotor.class, "HDriveMotor");
-        fourBar = (DcMotorEx)map.get(DcMotor.class, "fourBar");
-        claw = map.crservo.get("claw");
-        hook = map.crservo.get("hook");
-        linearSlider = map.crservo.get("linearSlider");
-        //Webcam1 = map.get(WebcamName.class, "Webcam 1");
+        chainBar = (DcMotorEx)map.get(DcMotor.class, "chainBar");
+        claw = (DcMotorEx)map.get(DcMotor.class, "claw");
 
-
-        //left.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        HDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        //left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
     }
 
 
@@ -70,30 +56,20 @@ public class Hardware {
     public void driveMechanum(Gamepad gp){
         double turn = 0;
 
-        if(Math.abs(gp.right_stick_x)>=.01 || Math.abs(gp.left_stick_y)>=.01) {
-            if (Math.abs(gp.right_stick_x) >= .01) {
-                turn = gp.right_stick_x;
-            }
+        if(Math.abs(gp.right_stick_x)>=.01 || Math.abs(gp.left_stick_y)>=.01 || Math.abs(gp.left_stick_x)>=.01) {
+            frontLeft.setPower(gp.left_stick_y - gp.right_stick_x + gp.left_stick_x);
+            backLeft.setPower(gp.left_stick_y - gp.right_stick_x - gp.left_stick_x);
+            frontRight.setPower(gp.left_stick_y + gp.right_stick_x + gp.left_stick_x);
+            backRight.setPower(gp.left_stick_y + gp.right_stick_x - gp.left_stick_x);
+        }
 
-            frontLeft.setPower(gp.left_stick_y - turn + gp.left_stick_x);
-            backLeft.setPower(gp.left_stick_y - turn - gp.left_stick_x);
-            frontRight.setPower(gp.left_stick_y + turn + gp.left_stick_x);
-            backRight.setPower(gp.left_stick_y + turn - gp.left_stick_x);
-        }
-        if(gp.dpad_left){
-            HDriveMotor.setPower(-1);
-        }else if(gp.dpad_right){
-            HDriveMotor.setPower(1);
-        }else{
-            HDriveMotor.setPower(0);
-        }
         if(gp.left_bumper){
-            fourBar.setPower(-1);
+            chainBar.setPower(-1);
 
         }else if(gp.left_trigger > .2){
-            fourBar.setPower(gp.left_trigger);
+            chainBar.setPower(gp.left_trigger);
         }else{
-            fourBar.setPower(0);
+            chainBar.setPower(0);
         }
 
         if(gp.right_bumper){
@@ -103,80 +79,6 @@ public class Hardware {
         }else{
             claw.setPower(0);
         }
-
-        if(gp.a){
-            hook.setPower(1);
-        }else if(gp.x) {
-            hook.setPower(-1);
-        }else{
-            hook.setPower(0);
-        }
-
-        if(gp.y){
-            linearSlider.setPower(1);
-        }else if(gp.b) {
-            linearSlider.setPower(-1);
-        }else{
-            linearSlider.setPower(0);
-        }
-
-    }
-    public void drive(Gamepad gp) {
-        double turn = 0;
-        if(Math.abs(gp.right_stick_x)>=.01 || Math.abs(gp.left_stick_y)>=.01) {
-            if(Math.abs(gp.right_stick_x)>=.01) {
-                turn = gp.right_stick_x;
-            }
-            frontLeft.setPower(gp.left_stick_y - turn);
-            backLeft.setPower(gp.left_stick_y - turn);
-            frontRight.setPower(gp.left_stick_y + turn);
-            backRight.setPower(gp.left_stick_y + turn);
-        }else{
-            frontLeft.setPower(0);
-            backLeft.setPower(0);
-            frontRight.setPower(0);
-            backRight.setPower(0);
-        }
-        if(gp.dpad_left){
-            HDriveMotor.setPower(-1);
-        }else if(gp.dpad_right){
-            HDriveMotor.setPower(1);
-        }else{
-            HDriveMotor.setPower(0);
-        }
-        if(gp.left_bumper){
-            fourBar.setPower(-1);
-
-        }else if(gp.left_trigger > .2){
-            fourBar.setPower(gp.left_trigger);
-        }else{
-            fourBar.setPower(0);
-        }
-
-        if(gp.right_bumper){
-            claw.setPower(.5);
-        }else if(gp.right_trigger > .3){
-            claw.setPower(-1);
-        }else{
-            claw.setPower(0);
-        }
-
-        if(gp.a){
-            hook.setPower(1);
-        }else if(gp.x) {
-            hook.setPower(-1);
-        }else{
-            hook.setPower(0);
-        }
-
-        if(gp.y){
-            linearSlider.setPower(1);
-        }else if(gp.b) {
-            linearSlider.setPower(-1);
-        }else{
-            linearSlider.setPower(0);
-        }
-
 
     }
 
