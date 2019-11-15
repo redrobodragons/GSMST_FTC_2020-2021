@@ -38,9 +38,9 @@ public class Hardware {
         backRight = (DcMotorEx)map.get(DcMotor.class, "backRight");
         chainBar = (DcMotorEx)map.get(DcMotor.class, "chainBar");
         claw = (DcMotorEx)map.get(DcMotor.class, "claw");
-
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
@@ -53,16 +53,28 @@ public class Hardware {
         liftFront.setPower(f);
         liftBack.setPower(f);
     }*/
+    double deadZone = 0.05;
+    double rightX = 0;
+    double leftY = 0;
+    double leftX = 0;
     public void driveMechanum(Gamepad gp){
-        double turn = 0;
-
-        if(Math.abs(gp.right_stick_x)>=.01 || Math.abs(gp.left_stick_y)>=.01 || Math.abs(gp.left_stick_x)>=.01) {
+        rightX = Math.abs(gp.right_stick_x)>=deadZone?gp.right_stick_x:0;
+        leftX = Math.abs(gp.left_stick_x)>=deadZone?gp.left_stick_x:0;
+        leftY = Math.abs(gp.left_stick_y)>=deadZone?gp.left_stick_y:0;
+        if(gp.y==true){
+            frontRight.setPower(1);
+        }else if(gp.b==true){
+            backRight.setPower(1);
+        }else if(gp.x==true){
+            frontLeft.setPower(1);
+        }else if(gp.a==true){
+            backLeft.setPower(1);
+        }else {
             frontLeft.setPower(gp.left_stick_y - gp.right_stick_x + gp.left_stick_x);
             backLeft.setPower(gp.left_stick_y - gp.right_stick_x - gp.left_stick_x);
-            frontRight.setPower(gp.left_stick_y + gp.right_stick_x + gp.left_stick_x);
-            backRight.setPower(gp.left_stick_y + gp.right_stick_x - gp.left_stick_x);
+            frontRight.setPower(gp.left_stick_y + gp.right_stick_x - gp.left_stick_x);
+            backRight.setPower(gp.left_stick_y + gp.right_stick_x + gp.left_stick_x);
         }
-
         if(gp.left_bumper){
             chainBar.setPower(-1);
 
