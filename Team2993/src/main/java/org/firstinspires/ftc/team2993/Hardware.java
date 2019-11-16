@@ -61,33 +61,25 @@ public class Hardware {
         rightX = Math.abs(gp.right_stick_x)>=deadZone?gp.right_stick_x:0;
         leftX = Math.abs(gp.left_stick_x)>=deadZone?gp.left_stick_x:0;
         leftY = Math.abs(gp.left_stick_y)>=deadZone?gp.left_stick_y:0;
-        if(gp.y==true){
-            frontRight.setPower(1);
-        }else if(gp.b==true){
-            backRight.setPower(1);
-        }else if(gp.x==true){
-            frontLeft.setPower(1);
-        }else if(gp.a==true){
-            backLeft.setPower(1);
-        }else {
-            frontLeft.setPower(gp.left_stick_y - gp.right_stick_x + gp.left_stick_x);
-            backLeft.setPower(gp.left_stick_y - gp.right_stick_x - gp.left_stick_x);
-            frontRight.setPower(gp.left_stick_y + gp.right_stick_x - gp.left_stick_x);
-            backRight.setPower(gp.left_stick_y + gp.right_stick_x + gp.left_stick_x);
-        }
-        if(gp.left_bumper){
-            chainBar.setPower(-1);
 
-        }else if(gp.left_trigger > .2){
-            chainBar.setPower(gp.left_trigger);
+            frontLeft.setPower(-1*gp.left_stick_y + gp.right_stick_x + gp.left_stick_x);
+            backLeft.setPower(-1*gp.left_stick_y + gp.right_stick_x - gp.left_stick_x);
+            frontRight.setPower(-1*gp.left_stick_y - gp.right_stick_x - gp.left_stick_x);
+            backRight.setPower(-1*gp.left_stick_y - gp.right_stick_x + gp.left_stick_x);
+
+        if(gp.left_bumper){
+            chainBar.setPower(.30);
+
+        }else if(gp.left_trigger > .1){
+            chainBar.setPower(-gp.left_trigger/1.8);
         }else{
             chainBar.setPower(0);
         }
 
         if(gp.right_bumper){
-            claw.setPower(.5);
-        }else if(gp.right_trigger > .3){
             claw.setPower(-1);
+        }else if(gp.right_trigger > .3){
+            claw.setPower(1);
         }else{
             claw.setPower(0);
         }
