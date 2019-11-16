@@ -23,9 +23,9 @@ public class Hardware {
     public WebcamName Webcam1 = null;
 
     public static final double     PI  =  3.14159;
-    public static final int        CPR = 140;                                 //encoder counts per revolution 140 or 560
-    private static final double    DIAMETER = 4;                               //encoded drive wheel diameter (in)
-    private static final double    GEARING = 1;
+    public static final int        CPR = 560;                                 //encoder counts per revolution 140 or 560
+    public static final double    DIAMETER = 3.86;                               //encoded drive wheel diameter (in)
+    public static final double    GEARING = 1;
     public static final double     CPI = (CPR * GEARING) / (DIAMETER * PI);
     public static final double     CPF = CPI * 12;
     public static final double     TURNING_RADIUS = 7;
@@ -181,7 +181,7 @@ public class Hardware {
 
         if(gp.left_bumper)
         {
-            vexIntake.setPower(-1);
+            vexIntake.setPower(-0.5);
         }
         else
         {
@@ -381,7 +381,31 @@ public class Hardware {
         right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }*/
 
+    public void resetEncoders(){
 
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void drive(int num)
+    {
+        frontRight.setPower(num);
+        frontLeft.setPower(num);
+        backRight.setPower(num);
+        backLeft.setPower(num);
+    }
+
+    public void stop()
+    {
+        drive(0);
+    }
 
 
 }
