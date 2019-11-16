@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.team3819;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="AutonTres")
+@Disabled
 public class AutonTres extends LinearOpMode {
 
     private Hardware robot = null;

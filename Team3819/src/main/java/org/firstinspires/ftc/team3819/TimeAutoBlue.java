@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="AutoStraight")
-public class AutonUno extends LinearOpMode {
+@Autonomous(name="TimeAutoBlue")
+public class TimeAutoBlue extends LinearOpMode {
 
     private Hardware robot = null;
 
@@ -25,15 +25,15 @@ public class AutonUno extends LinearOpMode {
         initialize();
         waitForStart();
 
-        robot.frontRight.setPower(1);
+        /*robot.frontRight.setPower(1);
         robot.frontLeft.setPower(1);
         robot.backRight.setPower(1);
         robot.backLeft.setPower(1);
-        waitCustom(400); //going forward for intake
+        waitCustom(600); //going forward for intake
         /*robot.frontRight.setPower(0);
         robot.frontLeft.setPower(0);
         robot.backRight.setPower(0);
-        robot.backLeft.setPower(0);*/
+        robot.backLeft.setPower(0);
         waitCustom(200);
         robot.frontRight.setPower(-1);
         robot.frontLeft.setPower(-1);
@@ -53,7 +53,54 @@ public class AutonUno extends LinearOpMode {
         robot.frontRight.setPower(0);
         robot.frontLeft.setPower(0);
         robot.backRight.setPower(0);
-        robot.backLeft.setPower(0);
+        robot.backLeft.setPower(0);*/
+
+        /*robot.drive(0.5);//going forward toward foundation
+        waitCustom(1200);
+        robot.drive(-1);//backward for intake
+        waitCustom(600);
+        robot.stop();
+        waitCustom(500);
+        robot.drive(-1);//back toward wall
+        waitCustom(600);
+        torqueUp(1); //intake up
+        waitCustom(200);
+        torqueStop();
+        waitCustom(200);
+        strafeLeft(1); //moving out of way of foundation
+        waitCustom(300);
+        robot.stop();
+        waitCustom(100);
+        torqueDown(); //bringing it under 14
+        waitCustom(200);
+        torqueStop();
+        strafeLeft(1); // going to park
+        waitCustom(200);
+        robot.stop();*/
+
+        robot.drive(1);//going forward toward foundation
+        waitCustom(1000);
+        robot.drive(-1);//backward for intake
+        waitCustom(600);
+        robot.stop();
+        waitCustom(2000);
+        robot.drive(-1);//back toward wall
+        waitCustom(500);
+        robot.stop();
+        torqueUp(0.5); //intake up
+        waitCustom(200);
+        torqueStop();
+        waitCustom(1000);
+        strafeRight(1); //moving out of way of foundation
+        waitCustom(500);
+        robot.stop();
+        waitCustom(1000);
+        torqueDown(); //bringing it under 14
+        waitCustom(100);
+        torqueStop();
+        strafeRight(1); // going to park
+        waitCustom(200);
+        robot.stop();
     }
 
     private void torqueStop()

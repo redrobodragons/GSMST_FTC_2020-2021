@@ -173,33 +173,37 @@ public class Hardware {
         if(gp.right_bumper)
         {
             vexIntake.setPower(1);
+            torqueBackRight.setPower(1);
         }
         else
         {
             vexIntake.setPower(0);
+            torqueBackRight.setPower(0);
         }
 
         if(gp.left_bumper)
         {
             vexIntake.setPower(-0.5);
+            torqueBackRight.setPower(-1);
         }
         else
         {
             vexIntake.setPower(0);
+            torqueBackRight.setPower(0);
         }
 
         if(gp.dpad_up)
         {
             torqueFrontRight.setPower(1);
             torqueFrontLeft.setPower(1);
-            torqueBackRight.setPower(1);
+            //torqueBackRight.setPower(1);
             //vexIntake.setPower(1);
         }
         else
         {
             torqueFrontRight.setPower(0);
             torqueFrontLeft.setPower(0);
-            torqueBackRight.setPower(0);
+            //torqueBackRight.setPower(0);
             //vexIntake.setPower(0);
         }
 
@@ -207,14 +211,14 @@ public class Hardware {
         {
             torqueFrontRight.setPower(-0.6);
             torqueFrontLeft.setPower(-0.6);
-            torqueBackRight.setPower(-1);
+            //torqueBackRight.setPower(-1);
             //vexIntake.setPower(-0.6);
         }
         else
         {
             torqueFrontRight.setPower(0);
             torqueFrontLeft.setPower(0);
-            torqueBackRight.setPower(0);
+            //torqueBackRight.setPower(0);
             //vexIntake.setPower(0);
         }
 
@@ -394,7 +398,7 @@ public class Hardware {
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void drive(int num)
+    public void drive(double num)
     {
         frontRight.setPower(num);
         frontLeft.setPower(num);
