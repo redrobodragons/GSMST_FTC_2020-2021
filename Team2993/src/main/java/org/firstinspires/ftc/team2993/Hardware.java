@@ -38,9 +38,8 @@ public class Hardware {
         backRight = (DcMotorEx)map.get(DcMotor.class, "backRight");
         chainBar = (DcMotorEx)map.get(DcMotor.class, "chainBar");
         claw = (DcMotorEx)map.get(DcMotor.class, "claw");
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
@@ -53,37 +52,69 @@ public class Hardware {
         liftFront.setPower(f);
         liftBack.setPower(f);
     }*/
-    double deadZone = 0.05;
+    double deadZone = 0.1;
     double rightX = 0;
     double leftY = 0;
     double leftX = 0;
     public void driveMechanum(Gamepad gp){
         rightX = Math.abs(gp.right_stick_x)>=deadZone?gp.right_stick_x:0;
         leftX = Math.abs(gp.left_stick_x)>=deadZone?gp.left_stick_x:0;
-        leftY = Math.abs(gp.left_stick_y)>=deadZone?gp.left_stick_y:0;
+        leftY = Math.abs(gp.left_stick_y)>=(deadZone+.6)?gp.left_stick_y:0;
 
-            frontLeft.setPower(-1*gp.left_stick_y + gp.right_stick_x + gp.left_stick_x);
-            backLeft.setPower(-1*gp.left_stick_y + gp.right_stick_x - gp.left_stick_x);
-            frontRight.setPower(-1*gp.left_stick_y - gp.right_stick_x - gp.left_stick_x);
-            backRight.setPower(-1*gp.left_stick_y - gp.right_stick_x + gp.left_stick_x);
+        frontLeft.setPower(-1*leftY+ rightX + leftX);
+        backLeft.setPower(-1*leftY + rightX - leftX);
+        frontRight.setPower(-1*leftY - rightX - leftX);
+        backRight.setPower(-1*leftY - rightX + leftX);
+
+
 
         if(gp.left_bumper){
-            chainBar.setPower(.30);
+            chainBar.setPower(-.60);
 
         }else if(gp.left_trigger > .1){
-            chainBar.setPower(-gp.left_trigger/1.8);
+            chainBar.setPower(gp.left_trigger/1.5);
         }else{
             chainBar.setPower(0);
         }
 
         if(gp.right_bumper){
-            claw.setPower(-1);
+            claw.setPower(-.3);
         }else if(gp.right_trigger > .3){
-            claw.setPower(1);
+            claw.setPower(.3);
         }else{
             claw.setPower(0);
         }
 
+    }
+
+    void razatsControls(Gamepad gp){
+        rightX = Math.abs(gp.right_stick_x)>=deadZone?gp.right_stick_x:0;
+        leftX = Math.abs(gp.left_stick_x)>=deadZone?gp.left_stick_x:0;
+        leftY = Math.abs(gp.left_stick_y)>=(deadZone+.6)?gp.left_stick_y:0;
+
+        frontLeft.setPower(-1*leftY+ rightX + leftX);
+        backLeft.setPower(-1*leftY + rightX - leftX);
+        frontRight.setPower(-1*leftY - rightX - leftX);
+        backRight.setPower(-1*leftY - rightX + leftX);
+
+
+
+        if(gp.right_bumper){
+            chainBar.setPower(-.60);
+
+        }else if(gp.right_trigger > .1){
+            chainBar.setPower(gp.left_trigger/1.5);
+        }else{
+            chainBar.setPower(0);
+        }
+
+        if(gp.left_bumper){
+            claw.setPower(.3);
+        }else if(gp.left_trigger > .3){
+            claw.setPower(-.3);
+        }else{
+            claw.setPower(0);
+        }
     }
 
 //    public void driveDos(Gamepad gp) {
@@ -155,7 +186,8 @@ public class Hardware {
         //left.setDirection(DcMotorSimple.Direction.REVERSE);
         //right.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        //while( (left.getCurrentPosition()>target + 10||left.getCurrentPosition()<target-10) &&
+        //while( (left.getCurrentPosition()>
+        target + 10||left.getCurrentPosition()<target-10) &&
         //      (right.getCurrentPosition()>target + 10||right.getCurrentPosition()<target-10) ) {
         left.setPower(pow);
         right.setPower(pow);
@@ -296,6 +328,17 @@ public class Hardware {
     public void setAllDrive(double power){
         frontLeft.setPower(power);
         backLeft.setPower(power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
+    }
+
+    public void setLift(double power){
+        chainBar.setPower(power);
+    }
+
+    public void turnDrive(double power){
+        frontLeft.setPower(-power);
+        backLeft.setPower(-power);
         frontRight.setPower(power);
         backRight.setPower(power);
     }
