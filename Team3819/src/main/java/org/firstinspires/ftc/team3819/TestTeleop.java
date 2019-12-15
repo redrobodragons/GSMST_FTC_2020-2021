@@ -46,12 +46,24 @@ public class TestTeleop extends OpMode {
         {
             robot.frontRight.setPower(1);
         }
+        else if(gp.x)
+        {
+            robot.vexIntake.setPower(1);
+        }
+        else if(gp.y)
+        {
+            robot.liftRight.setPower(1);
+            robot.liftLeft.setPower(1);
+        }
         else
         {
             robot.frontRight.setPower(0);
             robot.backRight.setPower(0);
             robot.frontLeft.setPower(0);
             robot.backLeft.setPower(0);
+            robot.vexIntake.setPower(0);
+            robot.liftRight.setPower(0);
+            robot.liftLeft.setPower(0);
         }
     }
 }

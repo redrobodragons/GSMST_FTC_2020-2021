@@ -25,31 +25,31 @@ public class AutonUno extends LinearOpMode {
         initialize();
         waitForStart();
 
-        robot.frontRight.setPower(1);
-        robot.frontLeft.setPower(1);
-        robot.backRight.setPower(1);
-        robot.backLeft.setPower(1);
+        robot.frontRight.setPower(0.5);
+        robot.frontLeft.setPower(0.5);
+        robot.backRight.setPower(0.5);
+        robot.backLeft.setPower(0.5);
         waitCustom(400); //going forward for intake
         /*robot.frontRight.setPower(0);
         robot.frontLeft.setPower(0);
         robot.backRight.setPower(0);
         robot.backLeft.setPower(0);*/
         waitCustom(200);
-        robot.frontRight.setPower(-1);
-        robot.frontLeft.setPower(-1);
-        robot.backRight.setPower(-1);
-        robot.backLeft.setPower(-1);
+        robot.frontRight.setPower(-0.5);
+        robot.frontLeft.setPower(-0.5);
+        robot.backRight.setPower(-0.5);
+        robot.backLeft.setPower(-0.5);
         waitCustom(600); //going backward for intake
         robot.frontRight.setPower(0);
         robot.frontLeft.setPower(0);
         robot.backRight.setPower(0);
         robot.backLeft.setPower(0);
         waitCustom(200);
-        robot.frontRight.setPower(1);
-        robot.frontLeft.setPower(1);
-        robot.backRight.setPower(1);
-        robot.backLeft.setPower(1);
-        waitCustom(700);//forward for park
+        robot.frontRight.setPower(0.5);
+        robot.frontLeft.setPower(0.5);
+        robot.backRight.setPower(0.5);
+        robot.backLeft.setPower(0.5);
+        waitCustom(500);//forward for park
         robot.frontRight.setPower(0);
         robot.frontLeft.setPower(0);
         robot.backRight.setPower(0);
