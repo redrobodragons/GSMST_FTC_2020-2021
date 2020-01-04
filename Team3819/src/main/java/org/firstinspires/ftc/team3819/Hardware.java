@@ -119,10 +119,10 @@ public class Hardware {
             if(Math.abs(gp.right_stick_x)>=.05) {
                 turn = gp.right_stick_x;
             }
-            frontLeft.setPower((-1 * gp.left_stick_y + turn)*.7);
-            backLeft.setPower((-1 * gp.left_stick_y + turn)*.7);
-            frontRight.setPower((-1 * gp.left_stick_y - turn)*.7);
-            backRight.setPower((-1 * gp.left_stick_y - turn)*.7);
+            frontLeft.setPower((-1 * gp.left_stick_y + turn));
+            backLeft.setPower((-1 * gp.left_stick_y + turn));
+            frontRight.setPower((-1 * gp.left_stick_y - turn));
+            backRight.setPower((-1 * gp.left_stick_y - turn));
         }
         else {
             frontLeft.setPower(0);
@@ -180,10 +180,10 @@ public class Hardware {
             vexIntake.setPower(0);
         }
 
-        /*if(gp.dpad_up)
+        if(gp.dpad_up)
         {
-            liftRight.setPower(0.8);
-            liftLeft.setPower(0.8);
+            liftRight.setPower(1.0);
+            liftLeft.setPower(1.0);
             //torqueBackRight.setPower(1);
             //vexIntake.setPower(1);
         }
@@ -208,7 +208,7 @@ public class Hardware {
             liftLeft.setPower(0);
             //torqueBackRight.setPower(0);
             //vexIntake.setPower(0);
-        }*/
+        }
 
 
 
