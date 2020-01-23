@@ -19,13 +19,12 @@ public class Hardware {
     public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null,
             torqueBackRight = null, torqueFrontRight = null, vexIntake = null, torqueFrontLeft = null, liftRight = null, liftLeft = null; //DC Motors
     public Servo servoBackRight = null, servoBackLeft = null, servoIntake = null, vexRight = null;
-    //public CRServo vexRight = null; //vexLeft = null;
     public WebcamName Webcam1 = null;
 
     public static final double     PI  =  3.14159;
     public static final int        CPR = 560;                                 //encoder counts per revolution 140 or 560
-    public static final double    DIAMETER = 3.86;                               //encoded drive wheel diameter (in)
-    public static final double    GEARING = 1;
+    public static final double     DIAMETER = 3.86;                               //encoded drive wheel diameter (in)
+    public static final double     GEARING = 1;
     public static final double     CPI = (CPR * GEARING) / (DIAMETER * PI);
     public static final double     CPF = CPI * 12;
     public static final double     TURNING_RADIUS = 7;
@@ -82,7 +81,28 @@ public class Hardware {
         liftBack.setPower(f);
     }*/
 
-    public void drive(Gamepad gp) {
+    public void driveOnly(Gamepad gp)
+    {
+        double turn2 = 0;
+        if(Math.abs(gp.left_stick_y)>=.05 || Math.abs(gp.right_stick_x)>=.05) {
+            if(Math.abs(gp.right_stick_x)>=.05) {
+                turn2 = gp.right_stick_x;
+            }
+            frontLeft.setPower((-1 * gp.left_stick_y + turn2));
+            backLeft.setPower((-1 * gp.left_stick_y + turn2));
+            frontRight.setPower((-1 * gp.left_stick_y - turn2));
+            backRight.setPower((-1 * gp.left_stick_y - turn2));
+        }
+        else {
+            frontLeft.setPower(0);
+            backLeft.setPower(0);
+            frontRight.setPower(0);
+            backRight.setPower(0);
+        }
+    }
+
+    public void drive(Gamepad gp)
+    {
         double turn = 0;
         if(Math.abs(gp.right_stick_x)>=.05 || Math.abs(gp.right_stick_y)>=.05) {
             if(Math.abs(gp.right_stick_x)>=.1) {

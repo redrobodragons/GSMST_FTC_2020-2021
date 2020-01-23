@@ -14,12 +14,14 @@ public class TestTeleop extends OpMode {
     double turn;
 
     @Override
-    public void init() {
+    public void init()
+    {
         robot = new Hardware(hardwareMap);
     }
 
-    private void driverOne() {
-        mehDrive(gamepad1);
+    private void driverOne()
+    {
+        robot.driveOnly(gamepad1);
     }
 
     @Override
