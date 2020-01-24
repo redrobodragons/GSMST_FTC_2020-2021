@@ -11,7 +11,7 @@ public class TeleOp extends OpMode {
         robot = new Hardware(hardwareMap);
     }
     private void driveRobot(){
-        robot.drive(gamepad1);
+        robot.driveMechanum(gamepad1);
         telemetry.addLine("Y stick 1 " + gamepad1.left_stick_y);
         telemetry.addLine("X stick 2 " + gamepad1.right_stick_x);
         telemetry.addLine("Left Trigger " + gamepad1.left_trigger);

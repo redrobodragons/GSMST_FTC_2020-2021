@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.team3819;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="AutonDos")
+@Disabled
 public class AutonDos extends LinearOpMode {
 
     private Hardware robot = null;
@@ -52,27 +54,27 @@ public class AutonDos extends LinearOpMode {
 
         waitForStart();
         //add paths and stuff now
-        inches(.5, 1, 5.0);
+        inches(.5, 1);
         waitCustom(5000);
         //turn2(.5, 90);
         //waitCustom(1000);
-        inches(.5, 1, 5.0);
+        inches(.5, 1);
         waitCustom(1000);
         //turn2(.5, -90);
 
     }
 
-    public void inches(double pow, int in, double timeout)
+    public void inches(double pow, int in)
     {
         int newLeftTarget;
         int newRightTarget;
 
         if(opModeIsActive() && !isStopRequested())
         {
-            newLeftTarget = robot.frontLeft.getCurrentPosition() + (int)(in * robot.CPI);
-            newRightTarget = robot.frontRight.getCurrentPosition() + (int)(in * robot.CPI);
-            newLeftTarget = robot.backLeft.getCurrentPosition() + (int)(in * robot.CPI);
-            newRightTarget = robot.backRight.getCurrentPosition() + (int)(in * robot.CPI);
+            //newLeftTarget = robot.frontLeft.getCurrentPosition() + (int)(in * robot.CPI);
+            //newRightTarget = robot.frontRight.getCurrentPosition() + (int)(in * robot.CPI);
+            newLeftTarget = (int)(in * robot.CPI);
+            newRightTarget = (int)(in * robot.CPI);
 
 
             robot.frontLeft.setTargetPosition(newLeftTarget);
@@ -93,11 +95,11 @@ public class AutonDos extends LinearOpMode {
             robot.backLeft.setPower(Math.abs(pow));
             robot.backRight.setPower(Math.abs(pow));
 
-            while (opModeIsActive() && (time.seconds() < timeout) &&
-                    (robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy())) {
+            while (opModeIsActive() && /*(time.seconds() < timeout) &&*/
+                    (robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()) && !isStopRequested()) {
 
                 // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Path1", "Running at %7d :%7d" ,newLeftTarget,  newRightTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
                         robot.frontLeft.getCurrentPosition(),
                         robot.frontRight.getCurrentPosition(),
@@ -273,7 +275,7 @@ public class AutonDos extends LinearOpMode {
 
     public void waitCustom(int ms) {
         time.reset();
-        while(time.milliseconds()<ms)
+        while(time.milliseconds()<ms && opModeIsActive() && !isStopRequested())
         {
 
         }

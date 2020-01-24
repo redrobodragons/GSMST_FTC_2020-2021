@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="AutoStraight")
-public class AutonUno extends LinearOpMode {
+@Autonomous(name="TimeAutoRed")
+public class TimeAutoRed extends LinearOpMode {
 
     private Hardware robot = null;
 
@@ -25,35 +25,29 @@ public class AutonUno extends LinearOpMode {
         initialize();
         waitForStart();
 
-        robot.frontRight.setPower(0.5);
-        robot.frontLeft.setPower(0.5);
-        robot.backRight.setPower(0.5);
-        robot.backLeft.setPower(0.5);
-        waitCustom(400); //going forward for intake
-        /*robot.frontRight.setPower(0);
-        robot.frontLeft.setPower(0);
-        robot.backRight.setPower(0);
-        robot.backLeft.setPower(0);*/
+        /*robot.drive(1);//going forward toward foundation
+        waitCustom(1000);
+        robot.drive(-1);//backward for intake
+        waitCustom(600);
+        robot.stop();
+        waitCustom(2000);
+        robot.drive(-1);//back toward wall
+        waitCustom(500);
+        robot.stop();
+        torqueUp(0.5); //intake up
         waitCustom(200);
-        robot.frontRight.setPower(-0.5);
-        robot.frontLeft.setPower(-0.5);
-        robot.backRight.setPower(-0.5);
-        robot.backLeft.setPower(-0.5);
-        waitCustom(600); //going backward for intake
-        robot.frontRight.setPower(0);
-        robot.frontLeft.setPower(0);
-        robot.backRight.setPower(0);
-        robot.backLeft.setPower(0);
+        torqueStop();
+        waitCustom(1000);
+        strafeLeft(1); //moving out of way of foundation
+        waitCustom(500);
+        robot.stop();
+        waitCustom(1000);
+        torqueDown(); //bringing it under 14
+        waitCustom(100);
+        torqueStop();
+        strafeLeft(1); // going to park
         waitCustom(200);
-        robot.frontRight.setPower(0.5);
-        robot.frontLeft.setPower(0.5);
-        robot.backRight.setPower(0.5);
-        robot.backLeft.setPower(0.5);
-        waitCustom(500);//forward for park
-        robot.frontRight.setPower(0);
-        robot.frontLeft.setPower(0);
-        robot.backRight.setPower(0);
-        robot.backLeft.setPower(0);
+        robot.stop();*/
     }
 
     private void strafeRight(double power)
