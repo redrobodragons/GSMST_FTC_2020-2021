@@ -77,7 +77,6 @@ public class AutonCuatro extends LinearOpMode {
             telemetry.addLine("backRight: " + robot.backRight.getCurrentPosition());
             telemetry.update();
         }
-        robot.stop();
     }
 
     public void waitCustom(int ms) {

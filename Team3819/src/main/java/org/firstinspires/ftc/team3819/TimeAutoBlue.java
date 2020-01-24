@@ -78,7 +78,7 @@ public class TimeAutoBlue extends LinearOpMode {
         waitCustom(200);
         robot.stop();*/
 
-        robot.drive(1);//going forward toward foundation
+        /*robot.drive(1);//going forward toward foundation
         waitCustom(1000);
         robot.drive(-1);//backward for intake
         waitCustom(600);
@@ -100,29 +100,10 @@ public class TimeAutoBlue extends LinearOpMode {
         torqueStop();
         strafeRight(1); // going to park
         waitCustom(200);
-        robot.stop();
+        robot.stop();*/
     }
 
-    private void torqueStop()
-    {
-        robot.torqueFrontRight.setPower(0);
-        robot.torqueFrontLeft.setPower(0);
-        robot.torqueBackRight.setPower(0);
-    }
 
-    private void torqueDown()
-    {
-        robot.torqueFrontRight.setPower(-0.6);
-        robot.torqueFrontLeft.setPower(-0.6);
-        robot.torqueBackRight.setPower(-1);
-    }
-
-    private void torqueUp(double power)
-    {
-        robot.torqueFrontRight.setPower(power);
-        robot.torqueFrontLeft.setPower(power);
-        robot.torqueBackRight.setPower(power);
-    }
     private void strafeRight(double power)
     {
         robot.frontLeft.setPower(power);

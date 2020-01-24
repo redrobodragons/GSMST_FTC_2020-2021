@@ -21,7 +21,7 @@ public class TestTeleop extends OpMode {
 
     private void driverOne()
     {
-        robot.driveOnly(gamepad1);
+        mehDrive(gamepad1);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class TestTeleop extends OpMode {
         {
             robot.backLeft.setPower(1);
         }
-        else if(gp.a)
+        else if(gp.right_trigger>0.1)
         {
             robot.backRight.setPower(1);
         }
@@ -44,18 +44,26 @@ public class TestTeleop extends OpMode {
         {
             robot.frontLeft.setPower(1);
         }
-        else if(gp.b)
+        else if(gp.left_trigger>0.1)
         {
             robot.frontRight.setPower(1);
         }
+        else if(gp.a)
+        {
+            robot.vexRight.setPower(1);
+            robot.vexLeft.setPower(1);
+        }
+        else if(gp.b)
+        {
+            robot.torqueTop.setPower(1);
+            robot.torqueBottom.setPower(1);
+        }
         else if(gp.x)
         {
-            robot.vexIntake.setPower(1);
-        }
-        else if(gp.y)
-        {
-            robot.liftRight.setPower(1);
-            robot.liftLeft.setPower(1);
+            robot.foundLeft.setPosition(1);
+            robot.foundRight.setPosition(1);
+            robot.liftBottom.setPosition(1);
+            robot.liftTop.setPosition(-1);
         }
         else
         {
@@ -63,9 +71,10 @@ public class TestTeleop extends OpMode {
             robot.backRight.setPower(0);
             robot.frontLeft.setPower(0);
             robot.backLeft.setPower(0);
-            robot.vexIntake.setPower(0);
-            robot.liftRight.setPower(0);
-            robot.liftLeft.setPower(0);
+            robot.torqueTop.setPower(0);
+            robot.torqueBottom.setPower(0);
+            robot.vexRight.setPower(0);
+            robot.vexLeft.setPower(0);
         }
     }
 }
