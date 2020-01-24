@@ -29,11 +29,11 @@
 
 package org.firstinspires.ftc.team2981;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -49,22 +49,29 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="LeagueMeet", group="Iterative Opmode")
-@Disabled
+@TeleOp(name="LeagueMeetCurrent", group="Iterative Opmode")
 
-public class GoBuildaTest extends OpMode
+
+public class LeagueMeet extends OpMode
 {
     private DcMotor backLeft = null ;
     private DcMotor backRight = null;
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
-    private DcMotor leftIntake = null;
-    private DcMotor rightIntake = null;
+    //private DcMotor leftIntake = null;
+    //private DcMotor rightIntake = null;
     private DcMotor leftLift = null;
     private DcMotor rightLift = null;
-    private Servo midIntake = null;
-    private Servo leftDropper = null;
-    private Servo rightDropper = null;
+    //private Servo midIntake = null;
+    //private DcMotor midIntake = null;
+    private DcMotor leftIntake = null;
+    private DcMotor rightIntake = null;
+    //private Servo leftDropper = null;
+    //private Servo rightDropper = null;
+    private Servo leftRollers = null;
+    private Servo rightRollers = null;
+    private Servo rightGrip = null;
+
 
 
 
@@ -72,6 +79,9 @@ public class GoBuildaTest extends OpMode
     private double deadzoneX = 0;
     private double deadzoneY = 0;
     private double deadzoneRotate = 0;
+
+    private boolean slowMode = false;
+
 
     @Override
     public void init() {
@@ -84,27 +94,32 @@ public class GoBuildaTest extends OpMode
         //frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontRight.setDirection(DcMotor.Direction.REVERSE);
-        leftIntake = hardwareMap.get(DcMotor.class, "leftIntake");
-        rightIntake = hardwareMap.get(DcMotor.class, "rightIntake");
-        rightIntake.setDirection(DcMotor.Direction.REVERSE);
+        leftRollers = hardwareMap.servo.get("leftRollers");
+        rightRollers = hardwareMap.servo.get("rightRollers");
         leftLift = hardwareMap.get(DcMotor.class, "leftLift");
         leftLift.setDirection(DcMotor.Direction.REVERSE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift = hardwareMap.get(DcMotor.class, "rightLift");
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        midIntake = hardwareMap.servo.get("midIntake");
-        leftDropper = hardwareMap.servo.get("leftDropper");
-        rightDropper = hardwareMap.servo.get("rightDropper");
+        rightIntake = hardwareMap.get(DcMotor.class, "rightIntake");
+        rightIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftIntake = hardwareMap.get(DcMotor.class, "leftIntake");
+        leftIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftIntake.setDirection(DcMotor.Direction.REVERSE);
+        //leftDropper = hardwareMap.servo.get("leftDropper");
+        //rightDropper = hardwareMap.servo.get("rightDropper");
+        rightGrip = hardwareMap.servo.get("rightGrip");
 
 
 
 
         // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialization Complete");
+        telemetry.addData("Status", "Initialized");
 
 
 
     }
+
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -122,14 +137,15 @@ public class GoBuildaTest extends OpMode
     @Override
     public void start() {
 
-        for(int b = 0; b<9; b++){ // Drops the rollers
+        /*for(int b = 0; b<9; b++){ // Drops the rollers
             for (double i = 0; i <= 1; i = i + 0.05) {
                 double j  = 1-i;
                 leftDropper.setPosition(i);
                 rightDropper.setPosition(j);
             }
 
-        }
+        }*/
+
 
 
 
@@ -176,53 +192,122 @@ public class GoBuildaTest extends OpMode
         final double v4 = r * Math.cos(robotAngle) - rightX;
 
 
-
-        frontLeft.setPower(v1);
+    if(!slowMode){frontLeft.setPower(v1);
         frontRight.setPower(v2);
         backLeft.setPower(v3);
         backRight.setPower(v4);
 
-        if(gamepad2.x){
-            leftIntake.setPower(1);
-            rightIntake.setPower(1);
-        }
-        else if(gamepad2.y){
-            leftIntake.setPower(-1);
-            rightIntake.setPower(-1);
-        }
-        else{
-            leftIntake.setPower(0);
-            rightIntake.setPower(0);
-        }
+    }
+
+    else if(slowMode){
+        frontLeft.setPower(v1/2);
+        frontRight.setPower(v2/2);
+        backLeft.setPower(v3/2);
+        backRight.setPower(v4/2);
+    }
 
         if(gamepad2.dpad_left){
-            midIntake.setPosition(0);
-        }
-        else if(gamepad2.dpad_right){
-            midIntake.setPosition(.3);
+            rightIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightIntake.setPower(.3);
         }
 
-        /*else if(gamepad2.dpad_down){
-            midIntake.setPosition(.13);
-        } */
+
+        if(gamepad2.x){
+                leftIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                telemetry.addLine("Encoders Reset");
+        }
+
+        if(gamepad1.b){
+            leftRollers.setPosition(0);
+            rightRollers.setPosition(1);
+        }
+        else if(gamepad1.a){
+            leftRollers.setPosition(1);
+            rightRollers.setPosition(0);
+        }
+        else{
+            leftRollers.setPosition(0.5);
+            rightRollers.setPosition(0.5);
+        }
+
+
+        if(gamepad1.dpad_left){
+
+            //rightIntake.setTargetPosition(-5);
+            //rightIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightIntake.setPower(.3);
+        }
+        else if(gamepad1.dpad_right){
+            //rightIntake.setTargetPosition(-108);
+            //rightIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightIntake.setPower(-.3);
+        }
+
+
+        else if(gamepad1.dpad_down){ //When the bot clamps down on a block.
+            leftIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftIntake.setPower(-.6);
+            rightIntake.setPower(-.6);
+        }
+
+        if(gamepad1.y){
+            slowMode = !slowMode;
+        }
+       
+
+
+
 
 //Lift Code
-        if(gamepad2.left_bumper){
-
+        if(gamepad1.right_trigger > 0){
             leftLift.setPower(.4);
             rightLift.setPower(.4);
-
+        }
+        else if(gamepad1.left_trigger > 0){
+            leftLift.setPower(-.4);
+            rightLift.setPower(-.4);
         }
         else{
             leftLift.setPower(0);
             rightLift.setPower(0);
         }
+
+ //Platform Mover
+        if(gamepad1.x){
+            if(rightGrip.getPosition() == 0){
+                rightGrip.setPosition(180);
+            }
+            else{
+                rightGrip.setPosition(0);
+            }
+        }
+
+
+
+        telemetry.addData("LeftEncoderPosition", leftIntake.getCurrentPosition());
+        telemetry.addData("RightEncoderPosition", rightIntake.getCurrentPosition());
+        telemetry.addData("SlowMode", slowMode);
+        //telemetry.addData("backLeftPosition", backLeft.getCurrentPosition());
+        //telemetry.addData("frontLeftPosition", frontLeft.getCurrentPosition());
+        //telemetry.addData("backRightPosition", backRight.getCurrentPosition());
+        //telemetry.addData("frontRightPosition", frontRight.getCurrentPosition());
+
+        //telemetry.addData("leftMotorSpeed", leftIntake.getPower());
+        //telemetry.addData("rightMotorSpeed", rightIntake.getPower());
+
+
     }
+
+
 
     /*
      * Code to run ONCE after the driver hits STOP
      */
-
+    @Override
     public void stop() {
     }
 
