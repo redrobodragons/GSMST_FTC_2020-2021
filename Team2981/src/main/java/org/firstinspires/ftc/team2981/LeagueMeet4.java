@@ -29,49 +29,34 @@
 
 package org.firstinspires.ftc.team2981;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-/**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
+@TeleOp(name="LeagueMeet4", group="Iterative Opmode")
 
-@TeleOp(name="LeagueMeet", group="Iterative Opmode")
-@Disabled
 
-public class GoBuildaTest extends OpMode
+public class LeagueMeet4 extends OpMode
 {
     private DcMotor backLeft = null ;
     private DcMotor backRight = null;
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
-    private DcMotor leftIntake = null;
-    private DcMotor rightIntake = null;
     private DcMotor leftLift = null;
     private DcMotor rightLift = null;
-    private Servo midIntake = null;
-    private Servo leftDropper = null;
-    private Servo rightDropper = null;
-
-
-
+    private DcMotor intakeClaw = null;
+    private Servo leftFoundation = null;
+    private Servo rightFoundation = null;
+    private Servo backServo = null;
 
     private double deadzoneX = 0;
     private double deadzoneY = 0;
     private double deadzoneRotate = 0;
+    private int level = 0;
+
+    private boolean slowMode = false;
+
 
     @Override
     public void init() {
@@ -84,27 +69,24 @@ public class GoBuildaTest extends OpMode
         //frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontRight.setDirection(DcMotor.Direction.REVERSE);
-        leftIntake = hardwareMap.get(DcMotor.class, "leftIntake");
-        rightIntake = hardwareMap.get(DcMotor.class, "rightIntake");
-        rightIntake.setDirection(DcMotor.Direction.REVERSE);
+
         leftLift = hardwareMap.get(DcMotor.class, "leftLift");
         leftLift.setDirection(DcMotor.Direction.REVERSE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift = hardwareMap.get(DcMotor.class, "rightLift");
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        midIntake = hardwareMap.servo.get("midIntake");
-        leftDropper = hardwareMap.servo.get("leftDropper");
-        rightDropper = hardwareMap.servo.get("rightDropper");
-
-
-
+        leftFoundation = hardwareMap.servo.get("leftFoundation");
+        rightFoundation = hardwareMap.servo.get("rightFoundation");
+        backServo = hardwareMap.servo.get("backServo");
+        intakeClaw =  hardwareMap.get(DcMotor.class, "intakeClaw");
 
         // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialization Complete");
+        telemetry.addData("Status", "Initialized");
 
 
 
     }
+
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -122,16 +104,6 @@ public class GoBuildaTest extends OpMode
     @Override
     public void start() {
 
-        for(int b = 0; b<9; b++){ // Drops the rollers
-            for (double i = 0; i <= 1; i = i + 0.05) {
-                double j  = 1-i;
-                leftDropper.setPosition(i);
-                rightDropper.setPosition(j);
-            }
-
-        }
-
-
 
         }
 
@@ -142,8 +114,8 @@ public class GoBuildaTest extends OpMode
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
 
+        //Implementation of a Controller Deadzone to prevent accidental movement due to uncentered joystick.
         if(Math.abs(gamepad1.left_stick_x) < 0.05){
             deadzoneX = 0;
         }
@@ -165,9 +137,8 @@ public class GoBuildaTest extends OpMode
             deadzoneRotate = gamepad1.right_stick_x;
         }
 
-
-
-        double r = Math.hypot(deadzoneX, -deadzoneY);
+        //Mecanum wheel drive calculations
+        double r = Math.hypot(deadzoneX, -deadzoneY); //deadzones are incorporated into these values
         double robotAngle = Math.atan2(-deadzoneY, deadzoneX) - Math.PI / 4;
         double rightX = deadzoneRotate/1.25;
         final double v1 = r * Math.cos(robotAngle) + rightX;
@@ -175,54 +146,60 @@ public class GoBuildaTest extends OpMode
         final double v3 = r * Math.sin(robotAngle) + rightX;
         final double v4 = r * Math.cos(robotAngle) - rightX;
 
-
-
-        frontLeft.setPower(v1);
-        frontRight.setPower(v2);
-        backLeft.setPower(v3);
-        backRight.setPower(v4);
-
-        if(gamepad2.x){
-            leftIntake.setPower(1);
-            rightIntake.setPower(1);
+        //Power set to each motor based on these calculations
+        frontLeft.setPower(-v1);
+        frontRight.setPower(-v2);
+        backLeft.setPower(-v3);
+        backRight.setPower(-v4);
+//----
+        if(gamepad1.a){ //Allows for control of Servos during Teleop to move the foundation during endgame.
+            leftFoundation.setPosition(0);
+            rightFoundation.setPosition(0);
         }
-        else if(gamepad2.y){
-            leftIntake.setPower(-1);
-            rightIntake.setPower(-1);
-        }
-        else{
-            leftIntake.setPower(0);
-            rightIntake.setPower(0);
+        if(gamepad1.b){
+            leftFoundation.setPosition(1);
+            rightFoundation.setPosition(1);
         }
 
-        if(gamepad2.dpad_left){
-            midIntake.setPosition(0);
+//----
+        if(gamepad1.dpad_up){ //Allows for movement of Servo on the back of the bot that carries blocks if pushbotting is needed.
+            backServo.setPosition(.50);
         }
-        else if(gamepad2.dpad_right){
-            midIntake.setPosition(.3);
+        if(gamepad1.dpad_down){
+            backServo.setPosition(0);
         }
+ //----
 
-        /*else if(gamepad2.dpad_down){
-            midIntake.setPosition(.13);
-        } */
+         if(gamepad1.dpad_left){ //Sets negative power to motor to open claw.
+             intakeClaw.setPower(-1);
+         }
+         else if(gamepad1.dpad_right){ //Turns of motor so that rubber bands return claw to default position.
+             intakeClaw.setPower(0);
+         }
+ //----
 
 //Lift Code
-        if(gamepad2.left_bumper){
-
+        if(gamepad1.left_trigger > 0){ // Lowers the lift on the bot.
             leftLift.setPower(.4);
             rightLift.setPower(.4);
-
         }
-        else{
+        else if(gamepad1.right_trigger > 0){ //Raises the lift on the bot
+            leftLift.setPower(-.4);
+            rightLift.setPower(-.4);
+        }
+        else{ //If nothing is pressed, set the motors to power 0 in order to have them brake.
             leftLift.setPower(0);
             rightLift.setPower(0);
         }
+//----
+        //Telemetry used for testing encoder values.
+        telemetry.addData("frontLeftPosition", frontLeft.getCurrentPosition());
+        telemetry.addData("backLeftPosition", backLeft.getCurrentPosition());
+        telemetry.addData("frontRightPosition", frontRight.getCurrentPosition());
+        telemetry.addData("backRightPosition", backRight.getCurrentPosition());
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-
+    @Override
     public void stop() {
     }
 

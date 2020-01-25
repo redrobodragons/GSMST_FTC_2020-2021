@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.team2981;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -50,6 +51,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 @TeleOp(name="TestServo", group="Iterative Opmode")
+@Disabled
 
 public class TestTeleop extends OpMode
 {
@@ -61,7 +63,9 @@ public class TestTeleop extends OpMode
     private DcMotor rightIntake = null;
     private Servo leftDropper = null;
     private Servo rightDropper = null;
-    //private CRServo claw = null;
+    private Servo foundLeft = null; // left foundation mover
+    private Servo foundRight = null; // right foundation mover
+    private Servo claw = null;
     private DcMotor leftLift = null;
     private DcMotor rightLift = null;
 
@@ -71,7 +75,9 @@ public class TestTeleop extends OpMode
     private static final double CR_SERVO_STOP = 0.0;
     private static final double CR_SERVO_FORWARD = 1.0;
     private static final double CR_SERVO_REVERSE = -1.0;
-
+    private double deadzoneX = 0.0;
+    private double deadzoneY = 0.0;
+    private double deadzoneRotate = 0.0;
 
 
     /*
@@ -98,19 +104,14 @@ public class TestTeleop extends OpMode
         rightLift = hardwareMap.get(DcMotor.class, "rightLift");
         leftDropper = hardwareMap.servo.get("leftDropper");
         rightDropper = hardwareMap.servo.get("rightDropper");
-        //claw = hardwareMap.crservo.get("claw");
+        foundLeft = hardwareMap.servo.get("foundLeft");
+        foundRight = hardwareMap.servo.get("foundRight");
+        claw = hardwareMap.servo.get("claw");
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-        for(int b = 0; b<9; b++){
-            for (double i = 0; i <= 1; i = i + 0.05) {
-                double j  = 1-i;
-                leftDropper.setPosition(i);
-                rightDropper.setPosition(j);
-            }
 
-        }
     }
 
     /*
@@ -129,6 +130,8 @@ public class TestTeleop extends OpMode
     @Override
     public void start() {
 
+
+
     }
 
     /*
@@ -137,67 +140,78 @@ public class TestTeleop extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
-        double drive = gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
-        //leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        //rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-        double r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-        double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = gamepad1.right_stick_x;
+        if(Math.abs(gamepad1.left_stick_x) < 0.05){
+            deadzoneX = 0;
+        }
+        else{
+            deadzoneX = gamepad1.left_stick_x;
+        }
+
+        if(Math.abs(gamepad1.left_stick_y) < 0.05){
+            deadzoneY = 0;
+        }
+        else{
+            deadzoneY = gamepad1.left_stick_y;
+        }
+
+        if(Math.abs(gamepad1.right_stick_x) < 0.05){
+            deadzoneRotate = 0;
+        }
+        else{
+            deadzoneRotate = gamepad1.right_stick_x;
+        }
+
+
+
+        double r = Math.hypot(deadzoneX, -deadzoneY);
+        double robotAngle = Math.atan2(-deadzoneY, deadzoneX) - Math.PI / 4;
+        double rightX = deadzoneRotate/1.25;
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
         final double v4 = r * Math.cos(robotAngle) - rightX;
 
 
-        //leftPower  = -gamepad1.left_stick_y ;
-        //rightPower = -gamepad1.right_stick_y ;
 
-
-        frontLeft.setPower(v1);
+        /*frontLeft.setPower(v1);
         frontRight.setPower(v2);
         backLeft.setPower(v3);
         backRight.setPower(v4);
-
+*/
         if(gamepad1.a){
             leftIntake.setPower(-1);
             rightIntake.setPower(-1);
+        }
+        else if (gamepad1.b){
+            leftIntake.setPower(1);
+            rightIntake.setPower(1);
         }
         else{
             leftIntake.setPower(0);
             rightIntake.setPower(0);
         }
 
-        if(gamepad1.dpad_up){
-            leftLift.setPower(.25);
-            rightLift.setPower(.25);
+
+
+
+
+        if (gamepad1.dpad_left){
+            foundLeft.setPosition(0);
+            foundRight.setPosition(0);
         }
-        else if(gamepad1.dpad_down){
-            leftLift.setPower(-.25);
-            rightLift.setPower(-.25);
-        }
-        else
-        {
-            leftLift.setPower(0);
-            rightLift.setPower(0);
+        else if(gamepad1.dpad_right){
+            foundLeft.setPosition(.5);
+            foundRight.setPosition(.5);
         }
 
-       /* if(gamepad1.y) {
-
-            for(int b = 0; b<9; b++){
-                for (double i = 0; i <= 1; i = i + 0.05) {
-                    double j  = 1-i;
-                    leftDropper.setPosition(i);
-                    rightDropper.setPosition(j);
-                }
-
-            }
-        } */
-
-
+       /* if(gamepad1.x){
+            claw.setPosition(.555); // opens the claw
+        }
+        else if(gamepad1.y){
+            claw.setPosition(0); // closes the claw
+        }
+*/
         /* WILL FIX LATER if(gamepad1.a && !aPressed){
             aPressed = true;
             if(!spinning){
@@ -217,6 +231,8 @@ public class TestTeleop extends OpMode
         // Show the elapsed game time and wheel power.
 
         //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        telemetry.addData("Servo pos Left", foundLeft.getPosition());
+        telemetry.addData("Servo pos Right", foundRight.getPosition());
 
     }
 

@@ -29,10 +29,10 @@
 
 package org.firstinspires.ftc.team2981;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -48,28 +48,15 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Outreach Event", group="Iterative Opmode")
+@TeleOp(name="GoBuildaBot", group="Iterative Opmode")
+@Disabled
 
-
-public class GoBildaCurrent extends OpMode
+public class GoBuildaCodeTest extends OpMode
 {
-    private DcMotor backLeft = null ;
+    private DcMotor backLeft = null;
     private DcMotor backRight = null;
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
-    //private DcMotor leftIntake = null;
-    //private DcMotor rightIntake = null;
-    private DcMotor leftLift = null;
-    private DcMotor rightLift = null;
-    //private Servo midIntake = null;
-    private DcMotor midIntake = null;
-    private Servo leftDropper = null;
-    private Servo rightDropper = null;
-    private Servo leftIntake = null;
-    private Servo rightIntake = null;
-
-
-
     private double deadzoneX = 0;
     private double deadzoneY = 0;
     private double deadzoneRotate = 0;
@@ -78,32 +65,13 @@ public class GoBildaCurrent extends OpMode
     public void init() {
         telemetry.addData("Status", "Initializing");
         backLeft  = hardwareMap.get(DcMotor.class, "backLeft");
-        //backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
-        //frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        leftIntake = hardwareMap.servo.get("leftIntake");
-        rightIntake = hardwareMap.servo.get("rightIntake");
-        leftLift = hardwareMap.get(DcMotor.class, "leftLift");
-        leftLift.setDirection(DcMotor.Direction.REVERSE);
-        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLift = hardwareMap.get(DcMotor.class, "rightLift");
-        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        midIntake = hardwareMap.get(DcMotor.class, "midIntake");
-        midIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //midIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftDropper = hardwareMap.servo.get("leftDropper");
-        rightDropper = hardwareMap.servo.get("rightDropper");
-
-
-
-
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialization Complete");
-
 
 
     }
@@ -124,15 +92,6 @@ public class GoBildaCurrent extends OpMode
     @Override
     public void start() {
 
-        for(int b = 0; b<9; b++){ // Drops the rollers
-            for (double i = 0; i <= 1; i = i + 0.05) {
-                double j  = 1-i;
-                leftDropper.setPosition(i);
-                rightDropper.setPosition(j);
-            }
-
-        }
-
 
 
         }
@@ -146,84 +105,39 @@ public class GoBildaCurrent extends OpMode
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
 
-        if(Math.abs(gamepad1.left_stick_x) < 0.05){
-            deadzoneX = 0;
+
+        if(gamepad1.dpad_left){ // Left D-Pad moves the frontLeft forward
+            frontLeft.setPower(1);
         }
         else{
-            deadzoneX = gamepad1.left_stick_x;
+            frontLeft.setPower(0);
         }
 
-        if(Math.abs(gamepad1.left_stick_y) < 0.05){
-            deadzoneY = 0;
-        }
-        else{
-            deadzoneY = gamepad1.left_stick_y;
-        }
-
-        if(Math.abs(gamepad1.right_stick_x) < 0.05){
-            deadzoneRotate = 0;
+        if(gamepad1.dpad_right){ // Right D-Pad moves the frontRight forward
+            frontRight.setPower(1);
         }
         else{
-            deadzoneRotate = gamepad1.right_stick_x;
+            frontRight.setPower(0);
         }
 
-
-
-        double r = Math.hypot(deadzoneX, -deadzoneY);
-        double robotAngle = Math.atan2(-deadzoneY, deadzoneX) - Math.PI / 4;
-        double rightX = deadzoneRotate/1.25;
-        final double v1 = r * Math.cos(robotAngle) + rightX;
-        final double v2 = r * Math.sin(robotAngle) - rightX;
-        final double v3 = r * Math.sin(robotAngle) + rightX;
-        final double v4 = r * Math.cos(robotAngle) - rightX;
-
-
-
-        frontLeft.setPower(v1);
-        frontRight.setPower(v2);
-        backLeft.setPower(v3);
-        backRight.setPower(v4);
-
-        if(gamepad2.x){
-            leftIntake.setPosition(0);
-            rightIntake.setPosition(1);
-        }
-        else if(gamepad2.y){
-            leftIntake.setPosition(1);
-            rightIntake.setPosition(0);
+        if(gamepad1.x){ // x button moves the backLeft forward
+            backLeft.setPower(1);
         }
         else{
-            leftIntake.setPosition(0.5);
-            rightIntake.setPosition(0.5);
+            backLeft.setPower(0);
         }
 
-        if(gamepad2.dpad_left){
-            midIntake.setPower(-.1);
-        }
-        else if(gamepad2.dpad_right){
-            midIntake.setPower(.1);
-        }
-
-        else{
-            midIntake.setPower(0);
-        }
-
-
-//Lift Code
-        if(gamepad2.left_bumper){
-
-            leftLift.setPower(.4);
-            rightLift.setPower(.4);
-
-        }
-        else if(gamepad2.right_bumper){
-            leftLift.setPower(-.4);
-            rightLift.setPower(-.4);
+        if(gamepad1.b){ // b button moves the backRight forward
+            backRight.setPower(1);
         }
         else{
-            leftLift.setPower(0);
-            rightLift.setPower(0);
+            backRight.setPower(0);
         }
+
+
+
+
+
     }
 
     /*
