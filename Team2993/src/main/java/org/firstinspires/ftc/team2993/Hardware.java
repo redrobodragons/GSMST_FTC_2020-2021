@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.team2993;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -16,9 +21,9 @@ public class Hardware {
 
     private HardwareMap map = null;
 
-    public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null, chainBar = null, claw = null;    //DC Motors
+    public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null, lift = null, claw = null;    //DC Motors
 //    public WebcamName Webcam1 = null;
-
+    public DistanceSensor leftDist = null, rightDist = null, backDist =null;
     public static final double     PI  =  3.14159;
     public static final int        CPR = 560;                                 //encoder counts per revolution
     private static final double    DIAMETER = 4;                               //encoded drive wheel diameter (in)
@@ -36,10 +41,14 @@ public class Hardware {
         backLeft = (DcMotorEx)map.get(DcMotor.class, "backLeft");
         frontRight = (DcMotorEx)map.get(DcMotor.class, "frontRight");
         backRight = (DcMotorEx)map.get(DcMotor.class, "backRight");
-        chainBar = (DcMotorEx)map.get(DcMotor.class, "chainBar");
+        lift = (DcMotorEx)map.get(DcMotor.class, "lift");
         claw = (DcMotorEx)map.get(DcMotor.class, "claw");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftDist = (DistanceSensor)map.get(DistanceSensor.class, "leftDist");
+        rightDist = (DistanceSensor)map.get(DistanceSensor.class, "rightDist");
+        backDist = (DistanceSensor)map.get(DistanceSensor.class, "backDist");
+
     }
 
 
@@ -52,149 +61,52 @@ public class Hardware {
         liftFront.setPower(f);
         liftBack.setPower(f);
     }*/
-    double deadZone = 0.1;
+    double deadZone = 0.05;
     double rightX = 0;
     double leftY = 0;
     double leftX = 0;
     public void driveMechanum(Gamepad gp){
         rightX = Math.abs(gp.right_stick_x)>=deadZone?gp.right_stick_x:0;
-        leftX = Math.abs(gp.left_stick_x)>=deadZone?gp.left_stick_x:0;
-        leftY = Math.abs(gp.left_stick_y)>=(deadZone+.6)?gp.left_stick_y:0;
+        leftY = Math.abs(gp.left_stick_y)>=(deadZone)?gp.left_stick_y:0;
 
-        frontLeft.setPower(-1*leftY+ rightX + leftX);
-        backLeft.setPower(-1*leftY + rightX - leftX);
-        frontRight.setPower(-1*leftY - rightX - leftX);
-        backRight.setPower(-1*leftY - rightX + leftX);
+        if(gp.dpad_left){
+            frontLeft.setPower(-1);
+            backLeft.setPower(1);
+            frontRight.setPower(1);
+            backRight.setPower(-1);
 
+        }else if(gp.dpad_right){
+            frontLeft.setPower(1);
+            backLeft.setPower(-1);
+            frontRight.setPower(-1);
+            backRight.setPower(1);
 
-
+        }else{
+            frontLeft.setPower(-1*leftY+ rightX);
+            backLeft.setPower(-1*leftY + rightX);
+            frontRight.setPower(-1*leftY - rightX);
+            backRight.setPower(-1*leftY - rightX);
+        }
         if(gp.left_bumper){
-            chainBar.setPower(-.60);
-
-        }else if(gp.left_trigger > .1){
-            chainBar.setPower(gp.left_trigger/1.5);
-        }else{
-            chainBar.setPower(0);
-        }
-
-        if(gp.right_bumper){
-            claw.setPower(-.3);
-        }else if(gp.right_trigger > .3){
-            claw.setPower(.3);
-        }else{
-            claw.setPower(0);
-        }
-
-    }
-
-    void razatsControls(Gamepad gp){
-        rightX = Math.abs(gp.right_stick_x)>=deadZone?gp.right_stick_x:0;
-        leftX = Math.abs(gp.left_stick_x)>=deadZone?gp.left_stick_x:0;
-        leftY = Math.abs(gp.left_stick_y)>=(deadZone+.6)?gp.left_stick_y:0;
-
-        frontLeft.setPower(-1*leftY+ rightX + leftX);
-        backLeft.setPower(-1*leftY + rightX - leftX);
-        frontRight.setPower(-1*leftY - rightX - leftX);
-        backRight.setPower(-1*leftY - rightX + leftX);
-
-
-
-        if(gp.right_bumper){
-            chainBar.setPower(-.60);
-
-        }else if(gp.right_trigger > .1){
-            chainBar.setPower(gp.left_trigger/1.5);
-        }else{
-            chainBar.setPower(0);
-        }
-
-        if(gp.left_bumper){
-            claw.setPower(.3);
+            claw.setPower(.5);
         }else if(gp.left_trigger > .3){
             claw.setPower(-.3);
         }else{
             claw.setPower(0);
         }
+        if(gp.right_bumper){
+            lift.setPower(.60);
+
+        }else if(gp.right_trigger > .1){
+            lift.setPower(-gp.right_trigger/1.5);
+            claw.setPower(.5);
+        }else{
+            lift.setPower(0);
+        }
+
+
     }
 
-//    public void driveDos(Gamepad gp) {
-//        double turn = 0;
-//        /*if(Math.abs(gp.left_stick_x)>=.05 || Math.abs(gp.right_stick_y)>=.05) {
-//            if(Math.abs(gp.left_stick_x)>=.05) {
-//                turn = gp.left_stick_x;
-//            }
-//            frontLeft.setPower((-1 * gp.right_stick_y + turn)*2);
-//            backLeft.setPower((-1 * gp.right_stick_y + turn)*2);
-//            frontRight.setPower((-1 * gp.right_stick_y - turn)*2);
-//            backRight.setPower((-1 * gp.right_stick_y - turn)*2);
-//        }*/
-//        if(Math.abs(gp.left_stick_y)>=.05 || Math.abs(gp.right_stick_x)>=.05) {
-//            if(Math.abs(gp.right_stick_x)>=.05) {
-//                turn = gp.right_stick_x;
-//            }
-//            frontLeft.setPower((-1 * gp.left_stick_y + turn)*2);
-//            backLeft.setPower((-1 * gp.left_stick_y + turn)*2);
-//            frontRight.setPower((-1 * gp.left_stick_y - turn)*2);
-//            backRight.setPower((-1 * gp.left_stick_y - turn)*2);
-//        }
-//        else {
-//            frontLeft.setPower(0);
-//            backLeft.setPower(0);
-//            frontRight.setPower(0);
-//            backRight.setPower(0);
-//        }
-//        if(gp.left_bumper)
-//        {
-//            frontLeft.setPower(1);
-//            backLeft.setPower(-1);
-//            frontRight.setPower(-1);
-//            backRight.setPower(1);
-//        }
-//        else
-//        {
-//            frontLeft.setPower(0);
-//            backLeft.setPower(0);
-//            frontRight.setPower(0);
-//            backRight.setPower(0);
-//        }
-//        if(gp.right_bumper)
-//        {
-//            frontLeft.setPower(-1);
-//            backLeft.setPower(1);
-//            frontRight.setPower(1);
-//            backRight.setPower(-1);
-//        }
-//    }
-
-    /*public void driveInches(double pow, int in) {
-        resetEncoders();
-        motorControllerEx = (DcMotorControllerEx)left.getController();
-        PIDFCoefficients pidfNew = new PIDFCoefficients(128, 40, 192, 57);
-        int motorIndexL = ((DcMotorEx)left).getPortNumber();
-        int motorIndexR = ((DcMotorEx)left).getPortNumber();
-
-        int target = (int)(in*CPI);
-
-        //motorControllerEx.setPIDFCoefficients(motorIndexL,DcMotor.RunMode.RUN_TO_POSITION,pidfNew);
-        //motorControllerEx.setPIDFCoefficients(motorIndexR,DcMotor.RunMode.RUN_TO_POSITION,pidfNew);
-        left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        left.setTargetPosition(target);
-        right.setTargetPosition(target);
-
-        //left.setDirection(DcMotorSimple.Direction.REVERSE);
-        //right.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        //while( (left.getCurrentPosition()>
-        target + 10||left.getCurrentPosition()<target-10) &&
-        //      (right.getCurrentPosition()>target + 10||right.getCurrentPosition()<target-10) ) {
-        left.setPower(pow);
-        right.setPower(pow);
-
-        //left.setDirection(DcMotorSimple.Direction.FORWARD);
-        //right.setDirection(DcMotorSimple.Direction.REVERSE);
-    }*/
 
     public void driveInches(double pow, int in)
     {
@@ -255,75 +167,12 @@ public class Hardware {
         backRight.setTargetPosition((int)((360.0/degrees)*CIRCUMFRENCE*CPI));
     }
 
-    /*public void turn(double pow, double degrees) {
-        resetEncoders();
-
-        left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        left.setTargetPosition(-1*(int)((360.0/degrees)*CIRCUMFRENCE*CPI));
-        right.setTargetPosition((int)((360.0/degrees)*CIRCUMFRENCE*CPI));
-
-        left.setPower(pow);
-        right.setPower(pow);
-    }*/
-
-    /*public void armUp() {
-        armLeft.setPower(1);
-        armRight.setPower(1);
+    public void moveDrive(double forward, double yaw, double lateral){
+        frontLeft.setPower(forward+ yaw + lateral);
+        backLeft.setPower(forward + yaw - lateral);
+        frontRight.setPower(forward - yaw - lateral);
+        backRight.setPower(forward - yaw + lateral);
     }
-
-    public void armDown() {
-        armLeft.setPower(-.05);
-        armRight.setPower(-.05);
-    }
-
-    public  void armStop() {
-        armLeft.setPower(0);
-        armRight.setPower(0);
-    }
-
-    public void servoUp() {
-        servo.setPosition(1);
-    }
-
-    public void servoDown() {
-        servo.setPosition(0.5);
-    }
-
-    public void intake() {intake.setPower(-.75); }
-
-    public void intake(float f) {intake.setPower(f); }
-
-    public void outtake() {intake.setPower(.75); }
-
-    public void outtake(float f) {intake.setPower(-f); }
-
-    public void donttake() {
-        intake.setPower(0);
-    }
-
-    public void stop() {
-        drive(0);
-    }
-
-    public boolean driveIsBusy(){
-        return left.isBusy() || right.isBusy();
-    }
-
-    public boolean isBusy(){
-        return left.isBusy() || right.isBusy();
-    }*/
-
-    /*public void resetEncoders(){
-        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }*/
-
-
 
     public void setAllDrive(double power){
         frontLeft.setPower(power);
@@ -333,7 +182,7 @@ public class Hardware {
     }
 
     public void setLift(double power){
-        chainBar.setPower(power);
+        lift.setPower(power);
     }
 
     public void turnDrive(double power){
