@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="AutonCuatro")
-@Disabled
 public class AutonCuatro extends LinearOpMode {
 
     private Hardware robot = null;
@@ -48,12 +47,9 @@ public class AutonCuatro extends LinearOpMode {
 
         waitForStart();
         //add paths and stuff now
-        driveInches(.5, 3);
-        waitCustom(5000);
+        driveInches(0.5, 3);
         //turn2(.5, 90);
         //waitCustom(1000);
-        driveInches(.5, -3);
-        waitCustom(1000);
         //turn2(.5, -90);
 
     }
@@ -62,10 +58,10 @@ public class AutonCuatro extends LinearOpMode {
         robot.resetEncoders();
         int target = -1*(int)(in*robot.CPI);
         int dir = in >= 0 ? 1 : -1;
-        robot.frontLeft.setPower(pow*dir);
-        robot.frontRight.setPower(pow*dir);
-        robot.backLeft.setPower(pow*dir);
-        robot.backRight.setPower(pow*dir);
+        robot.frontLeft.setPower(pow*dir*0);
+        robot.frontRight.setPower(pow*dir*0);
+        robot.backLeft.setPower(pow*dir*0);
+        robot.backRight.setPower(pow*dir*0);
         while( (robot.frontLeft.getCurrentPosition()>target + 50||robot.frontLeft.getCurrentPosition()<target-50) &&
                 ((robot.frontRight.getCurrentPosition()>target + 50||robot.frontRight.getCurrentPosition()<target-50)) &&
                 (robot.backLeft.getCurrentPosition()>target + 50||robot.backLeft.getCurrentPosition()<target-50) &&

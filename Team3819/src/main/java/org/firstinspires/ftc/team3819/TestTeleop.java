@@ -62,8 +62,6 @@ public class TestTeleop extends OpMode {
         {
             robot.foundLeft.setPosition(1);
             robot.foundRight.setPosition(1);
-            robot.liftBottom.setPosition(1);
-            robot.liftTop.setPosition(-1);
         }
         else
         {

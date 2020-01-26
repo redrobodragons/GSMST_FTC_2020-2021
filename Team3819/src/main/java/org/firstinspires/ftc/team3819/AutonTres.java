@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="AutonTres")
-@Disabled
 public class AutonTres extends LinearOpMode {
 
     private Hardware robot = null;
@@ -56,7 +55,7 @@ public class AutonTres extends LinearOpMode {
 
         waitForStart();
         //add paths and stuff now
-        encoderDrive(.5,.5, 2, 5, 2);
+        encoderDrive(.5,.5, 5, 10, 2);
         waitCustom(5000);
         //turn2(.5, 90);
         //waitCustom(1000);
@@ -148,10 +147,10 @@ public class AutonTres extends LinearOpMode {
 
             //Pass the seed values to the motors
 
-            /*robot.frontLeft.setPower(NLspeed);
+            robot.frontLeft.setPower(NLspeed);
             robot.frontRight.setPower(NRspeed);
             robot.backLeft.setPower(NLspeed);
-            robot.backRight.setPower(NRspeed);*/
+            robot.backRight.setPower(NRspeed);
 
         }
 
