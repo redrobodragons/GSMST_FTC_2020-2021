@@ -30,27 +30,6 @@ public class TeleopMech extends OpMode {
         telemetry.addLine("Y stick 1 " + gamepad1.left_stick_y);
         telemetry.addLine("X stick 2 " + gamepad1.right_stick_x);
         telemetry.update();
-
-
-        /*if(gamepad1.dpad_down) {
-            robot.armUp();
-        }
-        else if(gamepad1.dpad_up) {
-            robot.armDown();
-        }
-        else {
-            robot.armStop();
-        }
-
-        if(gamepad1.y) {
-            robot.servoUp();
-        }
-
-        if(gamepad1.x)
-        {
-            robot.servoDown();
-        }*/
-
     }
 
     @Override

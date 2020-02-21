@@ -32,47 +32,6 @@ public class TestTeleop extends OpMode {
 
     public void mehDrive(Gamepad gp)
     {
-        if(gp.right_bumper)
-        {
-            robot.backLeft.setPower(1);
-        }
-        else if(gp.right_trigger>0.1)
-        {
-            robot.backRight.setPower(1);
-        }
-        else if(gp.left_bumper)
-        {
-            robot.frontLeft.setPower(1);
-        }
-        else if(gp.left_trigger>0.1)
-        {
-            robot.frontRight.setPower(1);
-        }
-        else if(gp.a)
-        {
-            robot.vexRight.setPower(1);
-            robot.vexLeft.setPower(1);
-        }
-        else if(gp.b)
-        {
-            robot.torqueTop.setPower(1);
-            robot.torqueBottom.setPower(1);
-        }
-        else if(gp.x)
-        {
-            robot.foundLeft.setPosition(1);
-            robot.foundRight.setPosition(1);
-        }
-        else
-        {
-            robot.frontRight.setPower(0);
-            robot.backRight.setPower(0);
-            robot.frontLeft.setPower(0);
-            robot.backLeft.setPower(0);
-            robot.torqueTop.setPower(0);
-            robot.torqueBottom.setPower(0);
-            robot.vexRight.setPower(0);
-            robot.vexLeft.setPower(0);
-        }
+        
     }
 }
