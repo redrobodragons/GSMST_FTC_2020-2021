@@ -28,14 +28,15 @@ public class Auton extends LinearOpMode {
 
         robot.moveDrive(.5, 0, 0);//move forward a bit so you are oof the wall, move lift up
         robot.setLift(.3);
-        waitCustom(800);
+        waitCustom(400);
 
         robot.moveDrive(0, 0, 0);//stop drive
+        robot.setLift(0);
         waitCustom(500);
 
         time.reset();//move laterally and sense how far from the wall you are to line up with platform
-        robot.moveDrive(0, 0, -.5);
-        while(time.milliseconds() < 700 && robot.leftDist.getDistance(DistanceUnit.CM) > 34) {
+        robot.moveDrive(0, 0, -.35);
+        while(time.milliseconds() < 2000 && robot.leftDist.getDistance(DistanceUnit.CM) > 40) {
             waitCustom(10);
         }
 
@@ -43,30 +44,31 @@ public class Auton extends LinearOpMode {
         robot.setLift(0);
         waitCustom(800);
 
-        robot.moveDrive(-.4, 0, 0);//drive forward into the platform
+        robot.moveDrive(-.17, 0, 0);//drive forward into the platform
         robot.setLift(0);
-        waitCustom(300);
+        waitCustom(200);
 
+        robot.moveDrive(0, 0, 0);// drop lift down, clamp onto the platform
+        robot.setLift(0);
+        waitCustom(1000);
 
         robot.moveDrive(0, 0, 0);// drop lift down, clamp onto the platform
         robot.setLift(-.5);
-        waitCustom(700);
+        waitCustom(1300);
 
-        robot.moveDrive(-.8, 0, 0);//decrease lift power, pull platform back
+
+        robot.moveDrive(-.7, 0, 0);//decrease lift power, pull platform back
         robot.setLift(-.06);
-        waitCustom(2500);
+        waitCustom(2900);
 
         robot.moveDrive(0, 0, 0);//stop drive, lift off the platform
         robot.setLift(.45);
         waitCustom(700);
 
-        robot.moveDrive(-.4, .5, 0);//stop drive, lift off the platform
+        robot.moveDrive(0, 0, 0);//stop drive, lift off the platform
         robot.setLift(0);
         waitCustom(700);
 
-        robot.moveDrive(.4, 0, 0);//stop drive, lift off the platform
-        robot.setLift(0);
-        waitCustom(300);
 //        robot.moveDrive(.16, 0, 0);
 //        robot.setLift(0);
 //        waitCustom(700);
@@ -77,7 +79,29 @@ public class Auton extends LinearOpMode {
 
         robot.moveDrive(0, 0, 1);//move laterally and get under the fence
         robot.setLift(0);
-        waitCustom(2600);
+        waitCustom(3000);
+
+        robot.moveDrive(.7, 0, 0);//move laterally and get under the fence
+        robot.setLift(0);
+        waitCustom(800);
+
+
+        robot.moveDrive(0, -.3, 0);//move laterally and get under the fence
+        robot.setLift(0);
+        waitCustom(400);
+
+        robot.moveDrive(0, 0, -1);//move laterally and get under the fence
+        robot.setLift(0);
+        waitCustom(2000);
+
+        robot.moveDrive(-.6, 0, 0);//move laterally and get under the fence
+        robot.setLift(-.30);
+        waitCustom(800);
+
+        robot.moveDrive(0, 0, 1);//move laterally and get under the fence
+        robot.setLift(0);
+        waitCustom(1000);
+
     }
 
 

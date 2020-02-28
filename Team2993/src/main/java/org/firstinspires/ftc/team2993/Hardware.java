@@ -23,7 +23,7 @@ public class Hardware {
 
     public DcMotorEx  frontLeft = null, frontRight = null, backLeft = null, backRight = null, lift = null, claw = null;    //DC Motors
 //    public WebcamName Webcam1 = null;
-    public DistanceSensor leftDist = null, rightDist = null, backDist =null;
+    public DistanceSensor leftDist = null, rightDist = null;
     public static final double     PI  =  3.14159;
     public static final int        CPR = 560;                                 //encoder counts per revolution
     private static final double    DIAMETER = 4;                               //encoded drive wheel diameter (in)
@@ -47,7 +47,6 @@ public class Hardware {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         leftDist = (DistanceSensor)map.get(DistanceSensor.class, "leftDist");
         rightDist = (DistanceSensor)map.get(DistanceSensor.class, "rightDist");
-        backDist = (DistanceSensor)map.get(DistanceSensor.class, "backDist");
 
     }
 
@@ -66,8 +65,9 @@ public class Hardware {
     double leftY = 0;
     double leftX = 0;
     public void driveMechanum(Gamepad gp){
-        rightX = Math.abs(gp.right_stick_x)>=deadZone?gp.right_stick_x:0;
+        rightX = Math.abs(gp.right_stick_x)>=deadZone?gp.right_stick_x/2:0;
         leftY = Math.abs(gp.left_stick_y)>=(deadZone)?gp.left_stick_y:0;
+        leftX = Math.abs(gp.left_stick_x)>=(deadZone)?gp.left_stick_x:0;
 
         if(gp.dpad_left){
             frontLeft.setPower(-1);
@@ -82,13 +82,13 @@ public class Hardware {
             backRight.setPower(1);
 
         }else{
-            frontLeft.setPower(-1*leftY+ rightX);
-            backLeft.setPower(-1*leftY + rightX);
-            frontRight.setPower(-1*leftY - rightX);
-            backRight.setPower(-1*leftY - rightX);
+            frontLeft.setPower(-1*leftY+ rightX + leftX);
+            backLeft.setPower(-1*leftY + rightX - leftX);
+            frontRight.setPower(-1*leftY - rightX - leftX);
+            backRight.setPower(-1*leftY - rightX + leftX);
         }
         if(gp.left_bumper){
-            claw.setPower(.5);
+            claw.setPower(.8);
         }else if(gp.left_trigger > .3){
             claw.setPower(-.3);
         }else{
@@ -99,7 +99,7 @@ public class Hardware {
 
         }else if(gp.right_trigger > .1){
             lift.setPower(-gp.right_trigger/1.5);
-            claw.setPower(.5);
+            claw.setPower(.8);
         }else{
             lift.setPower(0);
         }

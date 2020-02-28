@@ -31,7 +31,6 @@ public class TeleOp extends OpMode {
 //        telemetry.addLine("Left Trigger " + gamepad1.left_trigger);
         telemetry.addLine("left: " + robot.leftDist.getDistance(DistanceUnit.CM));
         telemetry.addLine("right: " + robot.rightDist.getDistance(DistanceUnit.CM));
-        telemetry.addLine("back: " + robot.backDist.getDistance(DistanceUnit.CM));
         telemetry.update();
     }
 
