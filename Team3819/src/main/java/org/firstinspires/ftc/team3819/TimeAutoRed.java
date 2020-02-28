@@ -25,6 +25,20 @@ public class TimeAutoRed extends LinearOpMode {
         initialize();
         waitForStart();
 
+        waitCustom(600);
+
+        robot.frontRight.setPower(0.5);
+        robot.frontLeft.setPower(0.5);
+        robot.backRight.setPower(0.5);
+        robot.backLeft.setPower(0.5);
+
+        waitCustom(1200);
+
+        robot.frontRight.setPower(0);
+        robot.frontLeft.setPower(0);
+        robot.backRight.setPower(0);
+        robot.backLeft.setPower(0);
+
         /*robot.drive(1);//going forward toward foundation
         waitCustom(1000);
         robot.drive(-1);//backward for intake
