@@ -88,6 +88,7 @@ public class AutonUno extends LinearOpMode {
         }
         robot.stop();
     }
+    /*
 
     public void turn(double degrees) {
         robot.resetEncoders();
