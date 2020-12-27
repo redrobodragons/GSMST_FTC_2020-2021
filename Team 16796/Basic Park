@@ -1,0 +1,286 @@
+package org.firstinspires.ftc.team2981;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+@Autonomous(name = "CurrentAutonLeagueMeetOne")
+public class Basic_Park extends LinearOpMode {
+
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor backLeft = null;
+    private DcMotor backRight = null;
+    private DcMotor frontLeft = null;
+    private DcMotor frontRight=null;
+    private CRServo intake=null;
+    private DcMotor connectorWheels=null;
+    private DcMotor outtake=null;
+    private Servo baseServo=null;
+    private Servo gripServo=null;
+    
+
+
+    private void forward(double distance, double speed, long wait)
+    {
+        //Resets the encoders on the drive
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //Turns on the encoders on the drive
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Stores the current value of the encoders in separate variables for easy access to these values
+        double frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+        double backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+        double frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+        double backRightPosition = Math.abs(backRight.getCurrentPosition());
+
+        //The while loop checks that the encoder values on the wheels are less than the distance inputted.
+        while(frontLeftPosition < distance && frontRightPosition < distance && backLeftPosition < distance && backRightPosition < distance && !isStopRequested())
+        {
+            //While this condition is true, the bot moves at the speed inputted.
+            frontLeft.setPower(speed);
+            frontRight.setPower(speed);
+            backLeft.setPower(speed);
+            backRight.setPower(speed);
+
+            //The position of each wheel is updated and stored in the variables created earlier.
+            frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+            backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+            frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+            backRightPosition = Math.abs(backRight.getCurrentPosition());
+        }
+        //Once the loop condition fails(the bot has reached the distance), the power on each motor is set to zero.
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        //Optional time between each action on the bot.
+        sleep(wait);
+
+    }
+    //These methods below follow the same pattern as the forward method above. The difference is how power is sent to the motors.
+    private void backward(double distance, double speed, long wait)
+    {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+        double backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+        double frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+        double backRightPosition = Math.abs(backRight.getCurrentPosition());
+
+        while(frontLeftPosition < distance && frontRightPosition < distance && backLeftPosition < distance && backRightPosition < distance && !isStopRequested())
+        {
+            frontLeft.setPower(-speed);
+            frontRight.setPower(-speed);
+            backLeft.setPower(-speed);
+            backRight.setPower(-speed);
+
+            frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+            backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+            frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+            backRightPosition = Math.abs(backRight.getCurrentPosition());
+        }
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        sleep(wait);
+
+    }
+    private void strafeLeft(double distance, double speed, long wait)
+    {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+        double backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+        double frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+        double backRightPosition = Math.abs(backRight.getCurrentPosition());
+
+        while(frontLeftPosition < distance && frontRightPosition < distance && backLeftPosition < distance && backRightPosition < distance)
+        {
+            frontLeft.setPower(-speed);
+            frontRight.setPower(speed);
+            backLeft.setPower(speed);
+            backRight.setPower(-speed);
+
+            frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+            backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+            frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+            backRightPosition = Math.abs(backRight.getCurrentPosition());
+        }
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
+        sleep(wait);
+
+    }
+    private void strafeRight(double distance, double speed, long wait)
+    {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+        double backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+        double frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+        double backRightPosition = Math.abs(backRight.getCurrentPosition());
+
+        while(frontLeftPosition < distance && frontRightPosition < distance && backLeftPosition < distance && backRightPosition < distance)
+        {
+            frontLeft.setPower(speed);
+            frontRight.setPower(-speed);
+            backLeft.setPower(-speed);
+            backRight.setPower(speed);
+
+            frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+            backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+            frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+            backRightPosition = Math.abs(backRight.getCurrentPosition());
+        }
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        sleep(wait);
+
+    }
+    private void rotateLeft(double distance, double speed, long wait)
+    {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+        double backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+        double frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+        double backRightPosition = Math.abs(backRight.getCurrentPosition());
+
+        while(frontLeftPosition < distance && frontRightPosition < distance && backLeftPosition < distance && backRightPosition < distance)
+        {
+            frontLeft.setPower(-speed);
+            frontRight.setPower(speed);
+            backLeft.setPower(-speed);
+            backRight.setPower(speed);
+
+            frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+            backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+            frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+            backRightPosition = Math.abs(backRight.getCurrentPosition());
+        }
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        sleep(wait);
+
+    }
+    private void rotateRight(double distance, double speed, long wait)
+    {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+        double backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+        double frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+        double backRightPosition = Math.abs(backRight.getCurrentPosition());
+
+        while(frontLeftPosition < distance && frontRightPosition < distance && backLeftPosition < distance && backRightPosition < distance)
+        {
+            frontLeft.setPower(speed);
+            frontRight.setPower(-speed);
+            backLeft.setPower(speed);
+            backRight.setPower(-speed);
+
+            frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
+            backLeftPosition = Math.abs(backLeft.getCurrentPosition());
+            frontRightPosition = Math.abs(frontRight.getCurrentPosition());
+            backRightPosition = Math.abs(backRight.getCurrentPosition());
+        }
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        sleep(wait);
+
+    }
+    
+    @Override
+    public void runOpMode(){
+        backLeft  = hardwareMap.get(DcMotor.class, "backLeft");
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        intake = hardwareMap.get(CRServo.class, "intake");
+        connectorWheels = hardwareMap.get(DcMotor.class, "connectorWheels");
+        outtake = hardwareMap.get(DcMotor.class, "outtake");
+        baseServo=hardwareMap.get(Servo.class,"baseServo");
+        gripServo=hardwareMap.get(Servo.class,"gripServo");
+        baseServo.setPosition(1);
+        gripServo.setPosition(-1);
+        waitForStart();
+        gripServo.setPosition(-1);
+        baseServo.setPosition(1);
+        backward(6400, .37, 500);// the bot proceeds to Target Zone C
+        //Servo Arm Goes Down
+        baseServo.setPosition(-1);
+        //Servo Arm Releases Wobble Goal
+         gripServo.setPosition(1);
+        //Servo Arm Powered Upwards
+        baseServo.setPosition(1);
+        forward(2000, .37, 500);// the bot goes back to the Launch Line to Park
+    }
+
+}
+
+
