@@ -147,7 +147,7 @@ public class Basic_Drive extends OpMode
         
         //Intake-Outtake Connector Code and Outtake Code
         if(gamepad1.left_bumper ==true){
-            outtake.setPower(-1);
+            outtake.setPower(1);
             
             
         }
@@ -161,16 +161,36 @@ public class Basic_Drive extends OpMode
         }
         
         //Wobble Goal Arm Control Code
-        if(gamepad1.x)
+        /*if(gamepad1.x)
             baseArm.setPower(.5);
         else if(gamepad1.b)
-            baseArm.setPower(-.5);
+            baseArm.setPower(-.1);
         else if (gamepad1.a)
             gripServo.setPosition(1);
         else if (gamepad1.y)
             gripServo.setPosition(-1);
         else
-            {}
+            {}*/
+        //Wobble Arm Controller Code   
+        if(gamepad1.x)
+        {
+            baseArm.setPower(.4);
+        }
+        else if(gamepad1.b)
+        {
+            baseArm.setPower(-.4);
+        }
+        else if(gamepad1.y)
+        {
+            gripServo.setPosition(-1);
+        }
+        else if(gamepad1.a)
+        {
+            gripServo.setPosition(1);
+        }
+        
+            
+        
     
         //Mecanum wheel drive calculations
         double r = Math.hypot(deadzoneX, -deadzoneY); //deadzones are incorporated into these values
