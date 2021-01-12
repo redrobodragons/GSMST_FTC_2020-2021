@@ -18,8 +18,8 @@ public class Basic_Park extends LinearOpMode {
     private CRServo intake=null;
     private DcMotor connectorWheels=null;
     private DcMotor outtake=null;
-    private Servo baseServo=null;
     private Servo gripServo=null;
+    private DcMotor baseArm=null;
     
 
 
@@ -264,20 +264,23 @@ public class Basic_Park extends LinearOpMode {
         intake = hardwareMap.get(CRServo.class, "intake");
         connectorWheels = hardwareMap.get(DcMotor.class, "connectorWheels");
         outtake = hardwareMap.get(DcMotor.class, "outtake");
-        baseServo=hardwareMap.get(Servo.class,"baseServo");
         gripServo=hardwareMap.get(Servo.class,"gripServo");
-        baseServo.setPosition(1);
+    baseArm=hardwareMap.get(DcMotor.class, "baseArm");
         gripServo.setPosition(-1);
-        waitForStart();
+        
+waitForStart();
         gripServo.setPosition(-1);
-        baseServo.setPosition(1);
         backward(6400, .37, 500);// the bot proceeds to Target Zone C
         //Servo Arm Goes Down
-        baseServo.setPosition(-1);
+        baseArm.setPower(.5);
+    sleep(500);
+    baseArm.setPower(0);
         //Servo Arm Releases Wobble Goal
          gripServo.setPosition(1);
         //Servo Arm Powered Upwards
-        baseServo.setPosition(1);
+        baseArm.setPower(-.5);
+    sleep(500);
+    baseArm.setPower(0);
         forward(2000, .37, 500);// the bot goes back to the Launch Line to Park
     }
 
