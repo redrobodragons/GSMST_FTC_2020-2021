@@ -51,6 +51,7 @@ public class Basic_Drive extends OpMode
     private DcMotor outtake=null;
     private DcMotor baseArm=null;
     private Servo gripServo=null;
+    private CRServo connector = null;
 
     private double deadzoneX = 0;
     private double deadzoneY = 0;
@@ -58,17 +59,20 @@ public class Basic_Drive extends OpMode
     private int level = 0;
 
     private boolean slowMode = false;
-
+    private boolean yToggle = false;
+    private boolean aToggle =false;
+    boolean flywheel=false;
+    boolean closed=false;
 
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing");
         backLeft  = hardwareMap.get(DcMotor.class, "backLeft");
-        //backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
-        //frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         intake = hardwareMap.get(CRServo.class, "intake");
@@ -76,6 +80,7 @@ public class Basic_Drive extends OpMode
         outtake = hardwareMap.get(DcMotor.class, "outtake");
         baseArm=hardwareMap.get(DcMotor.class,"baseArm");
         gripServo=hardwareMap.get(Servo.class,"gripServo");
+        connector=hardwareMap.get(CRServo.class,"connector");
         
 
 
@@ -110,20 +115,21 @@ public class Basic_Drive extends OpMode
      */
     @Override
     public void loop() {
-
+        
+       
         //Implementation of a Controller Deadzone to prevent accidental movement due to uncentered joystick.
         if(Math.abs(gamepad1.left_stick_x) < 0.05){
             deadzoneX = 0;
         }
         else{
-            deadzoneX = gamepad1.left_stick_x;
+            deadzoneX = -gamepad1.left_stick_x;
         }
 
         if(Math.abs(gamepad1.left_stick_y) < 0.05){
             deadzoneY = 0;
         }
         else{
-            deadzoneY = gamepad1.left_stick_y;
+            deadzoneY = -gamepad1.left_stick_y;
         }
 
         if(Math.abs(gamepad1.right_stick_x) < 0.05){
@@ -134,62 +140,72 @@ public class Basic_Drive extends OpMode
         }
         
         //Intake Code
-        if(gamepad1.right_bumper ==true){
+        if (gamepad1.left_bumper == true)
+        {
             intake.setPower(.5);
-            
         }
-        else if(gamepad1.right_trigger==1){
+        else if (gamepad1.left_trigger>=.95)
+        {
             intake.setPower(-.5);
         }
-        else{
-            intake.setPower(0);
-        }
-        
-        //Intake-Outtake Connector Code and Outtake Code
-        if(gamepad1.left_bumper ==true){
-            outtake.setPower(1);
-            
-            
-        }
-        else if(gamepad1.left_trigger==1){
-            outtake.setPower(.75);
-            
-        }
-        else{
-            outtake.setPower(0);
-            
-        }
-        
-        //Wobble Goal Arm Control Code
-        /*if(gamepad1.x)
-            baseArm.setPower(.5);
-        else if(gamepad1.b)
-            baseArm.setPower(-.1);
-        else if (gamepad1.a)
-            gripServo.setPosition(1);
-        else if (gamepad1.y)
-            gripServo.setPosition(-1);
         else
-            {}*/
-        //Wobble Arm Controller Code   
-        if(gamepad1.x)
-        {
-            baseArm.setPower(.4);
+            intake.setPower(0.0);
+       
+        //Outtake 
+        if(gamepad1.y && !yToggle){
+            if(!flywheel){
+                outtake.setPower(.92);
+                flywheel=true;}
+            else{
+                outtake.setPower(0);
+                flywheel=false;
+            }
+            yToggle = true;
+        } else if(!gamepad1.y) yToggle = false;
+        
+        
+        //Connector Code
+        if(gamepad1.right_bumper ==true){
+            connector.setPower(.75);
         }
-        else if(gamepad1.b)
+        else if(gamepad1.right_trigger>=.95)
         {
-            baseArm.setPower(-.4);
+            connector.setPower(-.75);
         }
-        else if(gamepad1.y)
-        {
-            gripServo.setPosition(-1);
-        }
-        else if(gamepad1.a)
-        {
-            gripServo.setPosition(1);
+        else{
+           connector.setPower(0.0);
+            
         }
         
-            
+        
+        //Wobble Arm Controller Code   
+        if(gamepad1.dpad_up)
+        {
+            baseArm.setPower(-.75);
+        }
+        else if(gamepad1.dpad_down)
+        {
+            baseArm.setPower(.5);
+        }
+        else
+        {
+            baseArm.setPower(-.1);
+        }
+        
+        //Wobble Arm Gripper Code 
+        if(gamepad1.a && !aToggle){
+            if(!closed){
+                gripServo.setPosition(-1);
+                closed=true;}
+            else{
+                gripServo.setPosition(1);
+                closed=false;
+            }
+            aToggle = true;
+        } else if(!gamepad1.a) aToggle = false;
+       
+        
+
         
     
         //Mecanum wheel drive calculations
@@ -202,10 +218,10 @@ public class Basic_Drive extends OpMode
         final double v4 = r * Math.cos(robotAngle) - rightX;
 
         //Power set to each motor based on these calculations
-        frontLeft.setPower(-v1*.75);
-        frontRight.setPower(-v2*.75);
-        backLeft.setPower(-v3*.75);
-        backRight.setPower(-v4*.75);
+        frontRight.setPower(v1*.75);
+        frontLeft.setPower(v4*.75);
+        backRight.setPower(v3*.75);
+        backLeft.setPower(v2*.75);
 
 //----
         //Telemetry used for testing encoder values.
@@ -214,6 +230,8 @@ public class Basic_Drive extends OpMode
         telemetry.addData("frontRightPosition", frontRight.getCurrentPosition());
         telemetry.addData("backRightPosition", backRight.getCurrentPosition());
         telemetry.addData("wobbleGoalPosition",baseArm.getCurrentPosition());
+        telemetry.addData("r",r);
+        telemetry.addData("t",robotAngle);
     }
 
     @Override
