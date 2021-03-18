@@ -1,22 +1,37 @@
 package org.firstinspires.ftc.team2981;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import java.lang.annotation.Target;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import java.util.List;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 @Autonomous(name = "CurrentAutonLeagueMeetOne")
 public class Basic_Park extends LinearOpMode {
+    private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
     private DcMotor frontLeft = null;
+    private CRServo connector=null;
     private DcMotor frontRight=null;
     private CRServo intake=null;
-    private DcMotor connectorWheels=null;
     private DcMotor outtake=null;
     private Servo gripServo=null;
     private DcMotor baseArm=null;
@@ -124,9 +139,9 @@ public class Basic_Park extends LinearOpMode {
         while(frontLeftPosition < distance && frontRightPosition < distance && backLeftPosition < distance && backRightPosition < distance)
         {
             frontLeft.setPower(-speed);
-            frontRight.setPower(speed);
+            frontRight.setPower(-speed);
             backLeft.setPower(speed);
-            backRight.setPower(-speed);
+            backRight.setPower(speed);
 
             frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
             backLeftPosition = Math.abs(backLeft.getCurrentPosition());
@@ -161,9 +176,9 @@ public class Basic_Park extends LinearOpMode {
         while(frontLeftPosition < distance && frontRightPosition < distance && backLeftPosition < distance && backRightPosition < distance)
         {
             frontLeft.setPower(speed);
-            frontRight.setPower(-speed);
+            frontRight.setPower(speed);
             backLeft.setPower(-speed);
-            backRight.setPower(speed);
+            backRight.setPower(-speed);
 
             frontLeftPosition = Math.abs(frontLeft.getCurrentPosition());
             backLeftPosition = Math.abs(backLeft.getCurrentPosition());
@@ -253,6 +268,63 @@ public class Basic_Park extends LinearOpMode {
 
     }
     
+    private void grabGoal(){
+        //Servo Arm Goes Down
+        baseArm.setPower(.5);
+        sleep(1000);
+        //Servo Arm Grabs Wobble Goal
+        gripServo.setPosition(-1);
+        //Servo Arm Powered Upwards
+        baseArm.setPower(-.5);
+        sleep(1000);
+        baseArm.setPower(0);
+    }
+
+    private void placeGoal(){
+        //Servo Arm Goes Down
+        baseArm.setPower(.5);
+        sleep(1000);
+        //Servo Arm Releases Wobble Goal
+        gripServo.setPosition(1);
+        sleep(500);
+        //Servo Arm Powered Upwards
+        baseArm.setPower(-.4);
+        sleep(1500);
+        baseArm.setPower(0);
+    }
+
+    private void powerShots(){
+        //rotateRight(3200,1,100);
+        //sleep(1000);
+        outtake.setPower(1);
+        connector.setPower(.75);
+        sleep(2000);
+        connector.setPower(0);
+        strafeLeft(500,1,100);
+        connector.setPower(.75);
+        sleep(2000);
+        connector.setPower(0);
+        //strafeLeft(500,1,100);
+        //connector.setPower(.75);
+        //sleep(2000);
+        //connector.setPower(0);
+        //forward(300,1,100);
+    }
+    private static final String VUFORIA_KEY =
+            "AcUKrUj/////AAABmSXjxFQWh0pBkXaueCZgFLJEhfvozNSyGe2R1/LU1uY184CRr2/yQnRSCnhuR5WC4yX+Bg4wZyDwZIUdT7GMbq5fYqmOofVARi1iV0KjHRL6mOcZ0Mkum7Mt/whgXhvglqMGpXUMeGg/SDut9PVoKAYFhOM/NGrlRK8OWJPWhaMMhydlZb3Kz4BtAhOslCONU8J5lOBj6WyYruNEdJoncEc1kkF7CK6JHJy9C8Wmg816wzqVB98o9Ca+EKiuUb06Y23aOj/SIXyP9m+k3RHarjw1SaAuf48LTLDTJmBlsHhfS4H4bVL9t67NuSVj8xRgkDW/vfz0F6+aUu2SVD7Udt5PhX7qTa4BSbOX0PWgH/aG";
+
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+    private VuforiaLocalizer vuforia;
+
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * Detection engine.
+     */
+    private TFObjectDetector tfod;
+    
     @Override
     public void runOpMode(){
         backLeft  = hardwareMap.get(DcMotor.class, "backLeft");
@@ -262,28 +334,184 @@ public class Basic_Park extends LinearOpMode {
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         intake = hardwareMap.get(CRServo.class, "intake");
-        connectorWheels = hardwareMap.get(DcMotor.class, "connectorWheels");
+        connector = hardwareMap.get(CRServo.class, "connector");
         outtake = hardwareMap.get(DcMotor.class, "outtake");
         gripServo=hardwareMap.get(Servo.class,"gripServo");
-    baseArm=hardwareMap.get(DcMotor.class, "baseArm");
+        baseArm=hardwareMap.get(DcMotor.class, "baseArm");
         gripServo.setPosition(-1);
         
-waitForStart();
-        gripServo.setPosition(-1);
-        backward(6400, .37, 500);// the bot proceeds to Target Zone C
-        //Servo Arm Goes Down
-        baseArm.setPower(.5);
-    sleep(500);
-    baseArm.setPower(0);
-        //Servo Arm Releases Wobble Goal
-         gripServo.setPosition(1);
-        //Servo Arm Powered Upwards
-        baseArm.setPower(-.5);
-    sleep(500);
-    baseArm.setPower(0);
-        forward(2000, .37, 500);// the bot goes back to the Launch Line to Park
+// The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
+        // first.
+        initVuforia();
+
+        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+            initTfod();
+        } else {
+            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
+        }
+
+        /**
+         * Activate TensorFlow Object Detection before we wait for the start command.
+         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+         **/
+        if (tfod != null) {
+            tfod.activate();
+            //tfod.setZoom(2,16.0/9.0);
+        }
+
+        /** Wait for the game to begin */
+        telemetry.addData(">", "Press Play to start op mode");
+        telemetry.update();
+        waitForStart();
+
+                 if (opModeIsActive()) {
+                forward(400, .37, 500);
+                forward(50,.5,500);
+            while (opModeIsActive()) {
+                if (tfod != null) {
+                    // getUpdatedRecognitions() will return null if no new information is available since
+                    // the last time that call was made.
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                    if (updatedRecognitions != null) {
+                      telemetry.addData("# Object Detected", updatedRecognitions.size());
+                      if (updatedRecognitions.size() == 0 ) {
+                          // empty list.  no objects recognized.
+                          telemetry.addData("TFOD", "No items detected.");
+                          telemetry.addData("Target Zone", "A");
+                          //Robot alligns with Zone A
+                                strafeRight(900,1,100);
+                                // the bot proceeds to Target Zone A
+                                forward(2000, 1, 100);
+                                rotateRight(175,1,100);
+                                placeGoal();
+                                //Code to Navigate to Line
+                                rotateLeft(175,1,100);
+                                strafeLeft(1000,1,100);
+                                forward(1000,1,100);
+                                sleep(30000);
+                                
+                                //Code to Continue to Second Wobble Goal
+                                //Robot goes to left Start Line to get Wobble Goal
+                                //backward(4000/5,1,100);
+                                //rotateLeft(1600,1,100);
+                                //forward(750,1,100);
+                                //grabGoal();
+                                //Returns to Zone A
+                                //backward(750,1,100);
+                                //rotateRight(1600,1,100);
+                                //forward(2500,1,100);
+                                //placeGoal();
+                                //strafeLeft(3000,1,100);
+                                //powerShots();
+                      } else {
+                          // list is not empty.
+                          // step through the list of recognitions and display boundary info.
+                          int i = 0;
+                          for (Recognition recognition : updatedRecognitions) {
+                              telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                              telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                      recognition.getLeft(), recognition.getTop());
+                              telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                      recognition.getRight(), recognition.getBottom());
+                          
+                              // check label to see which target zone to go after.
+                              if (recognition.getLabel().equals("Single")) {
+                                telemetry.addData("Target Zone", "B");
+                               
+                                // the bot proceeds to Target Zone B
+                                forward(3000, 1, 100);
+                                rotateRight(100,1,100);
+                                placeGoal();
+                                sleep(30000);
+                                //Leaves Zone B
+                                
+                                //Go for Second Wobble Goal
+                                //strafeLeft(1250,1,100);
+                                //Backs up towards left start line
+                                //backward(4000,1,100);
+                                //Lines Up with Wobble Goal
+                                //rotateRight(1750,1,100);
+                                //grabGoal();
+                                //Turns away from Start Line
+                                //rotateLeft(1750,1,100);
+                                //Proceeds forward towards Zone B
+                                //forward(3000,1,100);
+                                //Strafes into Zone B
+                                //strafeRight(1250,1,100);
+                                //placeGoal();
+                                //backward(1000,1,100);
+                                //strafeLeft(200,1,100);
+                                //powerShots();
+                                
+                              } else if (recognition.getLabel().equals("Quad")) {
+                                 
+                                telemetry.addData("Target Zone", "C");
+                                //Robot alligns with Zone C
+                                strafeRight(800,1,500);
+                                // the bot proceeds to Target Zone C
+                                forward(4250, 1, 500);
+                                rotateRight(175,1,100);
+                                placeGoal();
+                                backward(1000,1,100);
+                                sleep(30000);
+                                //Code to Continue to Second Wobble Goal
+                                //rotateRight(1425,1,100);
+                                //backward(3500,1,100);
+                                //strafeRight(4850,1,100);
+                                //grabGoal();
+                                //rotateLeft(1600,1,100);
+                                //forward(3000,1,100);
+                                //strafeRight(1000,1,100);
+                                //placeGoal();
+                                //strafeLeft(750,1,100);
+                                //backward(1250, 1,100);
+                                //powerShots();
+
+                              } else {
+                                telemetry.addData("Target Zone", "UNKNOWN");
+                              } 
+                          }
+                        }
+                      telemetry.update();
+                    }
+                }
+            }
+        }
+
+        if (tfod != null) {
+            tfod.shutdown();
+        }
     }
 
+    /**
+     * Initialize the Vuforia localization engine.
+     */
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+       tfodParameters.minimumConfidence = 0.7;
+       tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+       tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+       
+       
+    }
 }
-
-
